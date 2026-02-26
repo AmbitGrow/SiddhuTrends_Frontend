@@ -1,16 +1,16 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
+import Footer from "./Components/Layout/Footer/Footer";
+import Header from "./Components/Layout/Header/Header";
+import AppRoutes from "./Routes/AppRoutes.jsx";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-    <h1>Pls bro speed uh frontend mudinga...</h1>
-    </>
-  )
+    <div className="app-container">
+      <Header/>
+      <AppRoutes />
+      <Footer/>
+    </div>
+  );
 }
 
-export default App
+export default App;
