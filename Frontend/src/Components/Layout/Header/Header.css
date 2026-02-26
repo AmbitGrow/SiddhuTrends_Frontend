@@ -1,0 +1,140 @@
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+.header-top-offer {
+  background-color: #3b3b3b;
+  width: 100%;
+  height: 35px;
+  text-align: center;
+  color: white;
+  font-size: 15px;
+}
+.header-desktop {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 50px;
+  margin: 20px 60px;
+  padding: 5px 15px;
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+}
+.header-left .logo img {
+  width: 150px;
+}
+.header-menu ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+.header-menu ul .navlink {
+  text-decoration: none;
+  color: #161616;
+}
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-left {
+  gap: 40px;
+}
+.header-right {
+  gap: 25px;
+}
+.header-right .header-cart-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.header-right .header-cart,
+.header-right .search,
+.header-right .wishlist {
+  background-color: #f2f2f2;
+  width: fit-content;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  position: relative;
+}
+.header-right .search {
+  background-color: #f2f2f2;
+  height: 40px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 20px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  width: 40px;
+  transition: width 0.4s ease;
+  padding: 0 10px;
+}
+
+.header-right .search.search-active {
+  width: 200px;
+}
+
+.search-icon {
+  min-width: 20px;
+  cursor: pointer;
+}
+
+.header-right .search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  margin-left: 8px;
+  font-size: 14px;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.header-right .search.search-active input {
+  opacity: 1;
+}
+.header-cart-section p {
+  font-size: 13px;
+  font-weight: lighter;
+}
+.header-cart-section .cart-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ee751b;
+  border-radius: 50%;
+  position: absolute;
+  top: 10px;
+  right: 8px;
+}
+.header-right .login {
+  background-color: #ee751b;
+  width: fit-content;
+  border-radius: 50px;
+  padding: 0px 20px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.header-right .login p {
+  font-size: 20px;
+  color: white;
+}
+.arrow-icon-login {
+  color: white;
+  font-size: 20px;
+}
