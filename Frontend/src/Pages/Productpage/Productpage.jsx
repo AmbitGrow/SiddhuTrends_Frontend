@@ -9,35 +9,16 @@ import { BiSort } from "react-icons/bi";
 import { IoStar } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { getAllProducts } from "../../services/ProductService";
 
 function Productpage() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   /* ---------------- PRODUCT DATA ---------------- */
 
-  const productsData = Array.from({ length: 30 }, (_, i) => {
-    const price = 150 + i * 30;
-    const originalPrice = 300 + i * 40;
-    const discount = Math.round(
-      ((originalPrice - price) / originalPrice) * 100,
-    );
-
-    return {
-      id: i + 1,
-      name: `LED Police Supercar Toy for Kids  Light up 911 Patrol Car ${i + 1}`,
-      category: ["Car", "Bike", "Educational Toy", "Wooden Toys"][i % 4],
-      price,
-      originalPrice,
-      discount,
-      age: ["0-12 months", "1-3 years", "3-5 years", "5-8 years", "8-12 years"][
-        i % 5
-      ],
-      reviews: 25 + i,
-      inStock: i % 2 === 0,
-    };
-  });
   const [open, setOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState("Sort by custom");
+  const productsData = getAllProducts();
 
   const selectOption = (value) => {
     setSortOption(value);

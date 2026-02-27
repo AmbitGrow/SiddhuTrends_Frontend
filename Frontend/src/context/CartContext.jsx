@@ -1,40 +1,81 @@
-import { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+  // Load from localStorage first
+  const [cartItems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("siddhu_cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  // Save to localStorage whenever cart changes
+  useEffect(() => {
+    localStorage.setItem("siddhu_cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addToCart = (product) => {
-    const exists = cartItems.find((item) => item.id === product.id);
+    const safeProduct = {
+      ...product,
+      price: Number(product.price) || 0,
+      originalPrice: Number(product.originalPrice) || 0,
+      quantity: Number(product.quantity) || 1,
+    };
 
-    if (exists) {
-      setCartItems(
-        cartItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+    setCartItems((prev) => {
+      const existingItem = prev.find((item) => item.id === safeProduct.id);
+
+      if (existingItem) {
+        return prev.map((item) =>
+          item.id === safeProduct.id
+            ? { ...item, quantity: item.quantity + safeProduct.quantity }
             : item,
-        ),
-      );
-    } else {
-      setCartItems([...cartItems, { ...product, quantity: 1 }]);
-    }
-  };
+        );
+      }
 
+      return [...prev, safeProduct];
+    });
+  };
   const removeFromCart = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const clearCart = () => setCartItems([]);
+  const increaseQuantity = (id) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
+      ),
+    );
+  };
 
-  const totalPrice = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
+ const decreaseQuantity = (id) => {
+  setCartItems((prev) =>
+    prev
+      .map((item) =>
+        item.id === id
+          ? { ...item, quantity: Math.max(1, item.quantity - 1) }
+          : item
+      )
   );
+};
+
+  // ================= CLEAR CART =================
+
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.removeItem("siddhu_cart");
+  };
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, totalPrice, clearCart }}
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        increaseQuantity,
+        decreaseQuantity,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>

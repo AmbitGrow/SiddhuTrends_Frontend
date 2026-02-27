@@ -1,5 +1,5 @@
 .productpage-container {
-  margin: 0px 100px;
+  margin: 0px 80px;
   margin-bottom: 100px;
 }
 .back-page-btn {
@@ -388,6 +388,7 @@
   font-weight: 300;
   line-height: 30px;
 }
+
 .second-review-age {
   display: flex;
   align-items: center;
@@ -421,6 +422,7 @@
 .second-review-age .age span {
   color: #050505;
 }
+
 .product-details .price-details {
   display: flex;
   align-items: center;
