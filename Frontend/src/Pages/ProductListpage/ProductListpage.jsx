@@ -7,27 +7,14 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import "./ProductListpage.css";
+import { getProductById } from "../../services/ProductService";
+
 function ProductListpage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart } = useCart();  
 
-  /* ---------------- PRODUCT DATA ---------------- */
-
-  const productsData = Array.from({ length: 30 }, (_, i) => ({
-    id: i + 1,
-    name: `LED Police Supercar Toy ${i + 1}`,
-    subtitle: "Reusable Digital Slate for Kids & Adults",
-    price: 99 + i * 10,
-    originalPrice: 250 + i * 20,
-    images: ["img1", "img2", "img3"],
-    description:
-      "This LCD writing tablet helps children practice writing and drawing.",
-    howToPlay: "Use stylus to write and erase with single click.",
-    delivery: "Delivery within 3-5 working days.",
-  }));
-
-  const product = productsData.find((item) => item.id === Number(id));
+  const product = getProductById(id);
 
   if (!product) return <h2>Product not found</h2>;
 
