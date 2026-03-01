@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import baby from "../../assets/Photos/baby.png";
-import giftbox from "../../assets/Photos/gift-box 1.png";
 import cheerKids from "../../assets/Photos/cheerKids.png";
+import dress1 from "../../assets/Photos/dress1.png";
+import giftbox from "../../assets/Photos/gift-box 1.png";
 import train from "../../assets/Photos/train.png";
 import wheel from "../../assets/Photos/wheels.png";
-import dress1 from "../../assets/Photos/dress1.png";
 import bluebaby from "../../assets/Photos/bluebaby.png";
 import "./Homepage.css";
 
@@ -77,7 +77,7 @@ const [count, setCount] = useState(0)
     <div className="sfb-grid2">
     <div className="sfb-card4"></div>
     <div className="sfb-card5"></div>
-     <div className="sfb-card6">
+    -<div className="sfb-card6">
       <div className="sfb-cards">
         <div className="sfb-card6-content">
           <h2>
@@ -89,7 +89,7 @@ const [count, setCount] = useState(0)
         </div>
 
         <div className="sfb-card6-image-container">
-          <img src={babyImage} alt="Baby Essentials" />
+          <img src={bluebaby} alt="Baby Essentials" />
         </div>
       </div>
     </div>

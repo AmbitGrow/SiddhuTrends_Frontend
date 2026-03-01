@@ -1,6 +1,6 @@
 
-import Footer from "./Components/Layout/Footer/Footer";
-import Header from "./Components/Layout/Header/Header";
+import Footer from "./Components/Layout/Footer/Footer.jsx";
+import Header from "./Components/Layout/Header/Header.jsx";
 import AppRoutes from "./Routes/AppRoutes.jsx";
 
 function App() {
