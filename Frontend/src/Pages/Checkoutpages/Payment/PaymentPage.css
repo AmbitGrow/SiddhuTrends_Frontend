@@ -1,0 +1,27 @@
+.payment-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px solid #eee;
+}
+
+.payment-summary {
+  margin: 20px 0;
+}
+
+.payment-summary div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.pay-btn {
+  width: 100%;
+  padding: 18px;
+  border-radius: 40px;
+  border: none;
+  background: #ee751b;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
