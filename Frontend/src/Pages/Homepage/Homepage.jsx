@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import React, { useRef } from "react";
 import baby from "../../assets/Photos/baby.png";
 import cheerKids from "../../assets/Photos/cheerKids.png";
 import dress1 from "../../assets/Photos/dress1.png";
@@ -7,11 +8,14 @@ import giftbox from "../../assets/Photos/gift-box 1.png";
 import train from "../../assets/Photos/train.png";
 import wheel from "../../assets/Photos/wheels.png";
 import bluebaby from "../../assets/Photos/bluebaby.png";
+import sleepbaby from "../../assets/Photos/sleepbaby.png"; 
+import hands from "../../assets/Photos/hands.png";
 import "./Homepage.css";
 
 function Homepage() {
 const navigate = useNavigate();
 const [count, setCount] = useState(0)
+
 
 
   const [activeCard, setActiveCard] = useState(0);
@@ -24,8 +28,89 @@ const [count, setCount] = useState(0)
     setActiveCard((prev) => (prev - 1 + 3) % 3);
   };
 
+    const scrollRef = useRef(null);
+
+  const scrollRight = () => {
+    scrollRef.current.scrollBy({
+      left: 300,
+      behavior: "smooth",
+    });
+  };
+
+  
+
   return (
     <>
+         {/* <section className="hero">
+      <div className="hero-container">
+        <div className="hero-left">
+          <h1>
+            Bring joy to every <br /> little playtime.
+          </h1>
+
+          <p className="hero-subtext">
+            Carefully selected toys that inspire learning, creativity, and
+            happiness trusted by parents and loved by kids.
+          </p>
+
+          <button className="shop-btn">Shop Now</button>
+        </div>
+        <div className="hero-right">
+          <div className="trusted-box">
+            <div className="avatar-group">
+              <div className="avatar"></div>
+              <div className="avatar"></div>
+              <div className="avatar"></div>
+            </div>
+
+            <div>
+              <p className="trusted-title">
+                Trusted by <strong>Happy Parents</strong>
+              </p>
+              <p className="trusted-desc">
+                Toys that bring joy, learning, and safe play into everyday
+                childhood moments.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="toy-image-wrapper">
+        <img
+          src={hands} 
+          alt="Toys"
+          className="toy-image"
+        />
+      </div>
+      <div className="cloud">
+        <svg viewBox="0 0 1440 200" preserveAspectRatio="none">
+          <path
+            d="M0,120 
+               Q60,80 120,120 
+               T240,120 
+               T360,120 
+               T480,120 
+               T600,120 
+               T720,120 
+               T840,120 
+               T960,120 
+               T1080,120 
+               T1200,120 
+               T1320,120 
+               T1440,120 
+               L1440,200 
+               L0,200 
+               Z"
+            fill="#ffffff"
+          />
+        </svg>
+      </div>
+    </section>  */}
+
+
+
+
+
   <div className="sba">
         <div className="card1">
           <p className="card-p1">0 - 12 MONTHS</p>
@@ -50,13 +135,44 @@ const [count, setCount] = useState(0)
         </div>
       </div>
 
-<br/>
+<br/> 
 
-<div className="sfb">
+
+
+   {/* <div className="categories-section">
+      <div className="categories-header">
+        <p>Explore Popular Categories</p>
+        <span className="view-all">View all &gt;</span>
+      </div><br/>
+
+      <div className="categories-wrapper">
+        <div className="categories-container" ref={scrollRef}>
+          {[...Array(10)].map((_, index) => (
+            <div className="category-card" key={index}>
+              <div className="category-circle"></div>
+              <p>Car</p>
+            </div>
+          ))}
+        </div>
+
+        <button className="scroll-btn" onClick={scrollRight}>
+          &#8250;
+        </button>
+      </div>
+    </div><br/> 
+
+
+
+
+
+
+
+ <div className="sfb">
   <p className="sfb-heading">Shop for Babies</p>
   <p className="sfb-content">Comfortable clothing and essentials for little ones</p>
   <div className="sfb-grid">
     <div className="sfb-grid1">
+
   <div class="sfb-card1">
   <div class="sfb-card1-content">
     <div class="sfb-card1-text-section"><div>
@@ -77,25 +193,26 @@ const [count, setCount] = useState(0)
     <div className="sfb-grid2">
     <div className="sfb-card4"></div>
     <div className="sfb-card5"></div>
-    -<div className="sfb-card6">
-      <div className="sfb-cards">
-        <div className="sfb-card6-content">
-          <h2>
+    <div className="sfb-card6">
+      <div className="sfb-card1-content">
+        <div className="sfb-card1-text-section">
+          <div><h2>
             Caps, Mittens & <br />
             Booties
           </h2>
-          <p className="sfb-card6-subtitle">Tiny Essentials</p>
-          <button className="sfb-card6-explore-btn">Explore Now</button>
+          <p className="sfb-card1-subtitle">Tiny Essentials</p></div>
+          <button className="sfb-card1-btn">Explore Now</button>
         </div>
 
         <div className="sfb-card6-image-container">
-          <img src={bluebaby} alt="Baby Essentials" />
+          <img className="bluebaby" src={bluebaby} alt="Baby Essentials" />
         </div>
       </div>
     </div>
     </div>
   </div>
 </div>
+
 
 <div class="fav-products-section">
 <div class="fav-header">
@@ -243,10 +360,9 @@ const [count, setCount] = useState(0)
 
 
 
+
 <div className="overall-card">
     <div className="carousel-main">
-
-      {/* ================= YELLOW CARD ================= */}
       {activeCard === 0 && (
         <div className="carousel-card yellow">
 
@@ -274,8 +390,6 @@ const [count, setCount] = useState(0)
 
         </div>
       )}
-
-      {/* ================= PURPLE CARD ================= */}
       {activeCard === 1 && (
         <div className="carousel-card purple">
 
@@ -303,8 +417,6 @@ const [count, setCount] = useState(0)
 
         </div>
       )}
-
-      {/* ================= MULTICOLOR CARD ================= */}
       {activeCard === 2 && (
         <div className="carousel-card multi">
 
@@ -338,7 +450,7 @@ const [count, setCount] = useState(0)
 
   <div className="starting-card">
     <div className="starting-card-top">
-    <div><p className="starting-card-heading">Starting $99</p>
+    <div className="starting-card-content"><p className="starting-card-heading">Starting $99</p>
     <p className="starting-card-para">Cars, rattles, puzzles & more</p>
     </div>
     <div className="starting-card-sub"></div>
@@ -404,7 +516,78 @@ const [count, setCount] = useState(0)
   </div>
 
 </div>
-</div>
+</div><br/>
+
+
+
+
+<section className="watch-section">
+
+      <h2>Watch & Choose Your Toy</h2>
+
+      <div className="watch-scroll">
+
+        {[...Array(6)].map((_, i) => (
+          <div className="watch-card" key={i}>
+
+            <div className="image-box"></div>
+
+            <div className="play-circle"></div>
+
+          </div>
+        ))}
+
+      </div>
+
+    </section>
+
+
+
+
+
+    <section className="contact-section">
+
+      <div className="contact-left">
+        <h2>We’re Here to Help!</h2>
+        <p>
+          Have questions about toys, orders, or delivery?
+          <br />
+          Our team is happy to help you anytime.
+        </p>
+
+        <div className="contact-cards">
+
+          <div className="contact-card phone">
+            <div className="icon-circle orange">📞</div>
+            <h4>Phone / <span>WhatsApp</span></h4>
+            <p>Call or WhatsApp : +91 XXXXXXXXXX</p>
+            <small>Available 10 AM – 7 PM</small>
+          </div>
+
+          <div className="contact-card email">
+            <div className="icon-circle blue">📞</div>
+            <h4>Email</h4>
+            <p>Email: support@siddhutrends.in</p>
+          </div>
+
+        </div>
+      </div>
+
+      <div className="contact-right">
+
+        <input type="text" placeholder="Name" />
+        <input type="text" placeholder="Phone or Email" />
+        <textarea placeholder="Message"></textarea>
+
+        <button className="send-btn">
+          <span className="btn-circle"></span>
+          Send Message
+          <span className="arrow-circle">↗</span>
+        </button>
+
+      </div>
+
+    </section>
 
 
 
@@ -422,7 +605,7 @@ const [count, setCount] = useState(0)
     <div className='join-card-image'>
       <img src={cheerKids} alt="hi" />
     </div>
-      </div>
+      </div> */}
       </>
   );
 }

@@ -6,9 +6,9 @@ import AppRoutes from "./Routes/AppRoutes.jsx";
 function App() {
   return (
     <div className="app-container">
-      <Header/>
+      {/* <Header/> */}
       <AppRoutes />
-      <Footer/>
+      {/* <Footer/> */}
     </div>
   );
 }
