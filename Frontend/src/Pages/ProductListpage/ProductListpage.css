@@ -1,202 +1,1129 @@
-.product-list-page-container {
-  margin: 0px 100px;
-  margin-bottom: 100px;
+/* ═══════════════════════════════════════════════════════════════
+   ProductListpage.css
+   
+   ZOOM / SCALING STRATEGY:
+   ─────────────────────────────────────────────────────────────
+   Browser zoom multiplies the CSS px unit — so a 100px element
+   becomes 200px at 200% zoom and collapses the layout.
+   
+   Fix: every measurement that affects layout width/height must
+   be expressed in RELATIVE units:
+     • Font sizes  → rem (scales with root font-size × zoom)
+     • Spacing     → em or rem
+     • Widths      → %, min(), max(), clamp()
+     • Flex gaps   → em / rem
+   
+   Fixed px is safe ONLY for:
+     • border widths (1px, 2px)
+     • box-shadow offsets
+     • border-radius on small elements (≤4px)
+   
+   BREAKPOINTS used:
+     1280px  large desktop
+     1024px  laptop / small desktop
+     768px   tablet landscape / portrait
+     480px   large phone
+     360px   small phone
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Global reset & base ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.back-page-btn {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-top: 30px;
+/* ─────────────────────────────────────────────
+   PAGE WRAPPER
+   width: 100% — never overflow viewport
+   padding-inline: fluid via clamp so page never
+   touches screen edges on any device
+───────────────────────────────────────────── */
+.plp-page {
+  width: 100%;
+  /* fluid side padding: 1rem on small → 6.25rem on wide */
+  padding-inline: clamp(1rem, 5vw, 6.25rem);
+  padding-bottom: clamp(2.5rem, 5vw, 5rem);
+  font-family: "Poppins", sans-serif;
+  color: #111;
+  /* CRITICAL: contain width so children can't escape */
+  overflow-x: hidden;
 }
-.back-page-btn .back {
-  display: flex;
+
+/* ─────────────────────────────────────────────
+   BACK BUTTON
+───────────────────────────────────────────── */
+.plp-back {
+  padding-top: clamp(1rem, 3vw, 1.875rem);
+  margin-bottom: clamp(1.25rem, 3vw, 1.875rem);
+}
+
+.plp-back__btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
-  background-color: #fafafa;
+  gap: 0.2em;
+  background: #fafafa;
   border: 1px solid #dadada;
-  padding: 7px 13px 7px 10px;
   border-radius: 50px;
-  font-size: 17px;
-  font-weight: light;
-  color: rgb(74, 74, 74);
-}
-.back .back-arrow-icon {
-  font-size: 24px;
-  color: black;
-}
-.directory {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.directory p {
-  font-size: 16px;
-}
-.directory .visited {
-  color: rgb(81, 81, 81);
-}
-.directory span {
-  padding: 0px 15px;
+  padding: 0.4em 0.85em 0.4em 0.6em;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  font-weight: 400;
+  color: #555;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
 }
 
-.product-view-section {
-  display: flex;
-  align-items: center;
-  margin-top: 30px;
+.plp-back__btn:hover {
+  background: #efefef;
 }
-.product-view-section .left-side {
-  display: flex;
-  /* align-items: center; */
-  gap: 20px;
+
+.plp-back__icon {
+  font-size: 1.35em;
+  color: #000;
 }
-.left-side .product-view .three-product-img {
-  background-color: #ffffff;
-  border-radius: 18px;
-  padding: 8px;
-  border: 1px solid #DADADA;
+
+/* ─────────────────────────────────────────────
+   MAIN PRODUCT GRID
+   Desktop:  [thumbs | main-img | actions]  +  [info]
+   Tablet:   [main-img + thumbs below]      +  [info]
+   Mobile:   [main-img] then [info] stacked
+───────────────────────────────────────────── */
+.plp-grid {
+  display: flex;
+  /* stretch makes both plp-media and plp-info fill the same height */
+  align-items: stretch;
+  gap: clamp(1.25rem, 4vw, 3.75rem);
+}
+
+/* ─── LEFT: media column ─── */
+.plp-media {
+  /* takes ~55% on desktop so it properly occupies half the page */
+  flex: 0 0 clamp(300px, 55%, 640px);
+  display: grid;
+  /* Left col: [thumbs / actions stacked] | Right col: [main image spanning both rows] */
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "thumbs  mainimg"
+    "actions mainimg";
+  gap: clamp(0.625rem, 1.5vw, 1.25rem);
+  /* stretch so left sub-column also fills the full grid height */
+  align-items: stretch;
+}
+
+/* Thumbnail strip */
+.plp-thumbs {
+  grid-area: thumbs;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-.three-product-img .img-div
-{
-     width: 80px;
-     height: 80px;
-     background-color: #D9D9D9;
-     border-radius: 15px;
-}
-.left-side .like-share
-{
-     margin-top: 30px;
-}
-.left-side .like-share-btn
-{
-     display: flex;
-     flex-direction: column;
-     justify-content: center;
-     align-items: center;
-}
-.left-side .like-share-icon
-{
-    width: 30px;
-    height: 30px;
-    background-color: #FAFAFA;
-    border: .6px solid #3D3D3D;
-    border-radius: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 17px;
-    color: black;
-}
-.left-side .like-share
-{
-     display: flex;
-     flex-direction: column;
-     justify-content: center;
-     align-items: center;
-     gap: 30px;
-}
-.left-side .product-show-section .product-main-img
-{
-    width: 500px;
-    height: 630px;
-    border-radius: 30px;
-    background-color: #D9D9D9;
+  gap: 0.5rem;
+  background: #fff;
+  border: 1px solid #dadada;
+  border-radius: 1rem;
+  padding: 0.4rem;
+  align-self: start;
 }
 
-.right-side {
-  margin-left: 60px;
+.plp-thumb {
+  /* fluid square: smaller on tablet/mobile, bigger on desktop */
+  width: clamp(48px, 5vw, 78px);
+  height: clamp(48px, 5vw, 78px);
+  background: #d9d9d9;
+  border-radius: 0.75rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.plp-thumb--active {
+  border-color: #ff7a00;
+}
+
+/* Main image wrapper — spans both rows so it fills the full left height */
+.plp-mainimg-wrap {
+  grid-area: mainimg;
+  position: relative;
+  align-self: stretch;
+}
+
+.plp-mainimg {
   width: 100%;
+  height: 100%;
+  /* height is driven by the grid rows (thumbs + actions), not a fixed ratio */
+  border-radius: clamp(1rem, 2.5vw, 1.875rem);
+  background: #d9d9d9;
+  object-fit: cover;
 }
 
-.subtitle {
-  margin-top: 5px;
+/* Desktop action strip — below thumbnail strip, anchored to top */
+.plp-actions {
+  grid-area: actions;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+}
+
+.plp-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.plp-action__icon {
+  width: clamp(26px, 2.5vw, 32px);
+  height: clamp(26px, 2.5vw, 32px);
+  background: #fafafa;
+  border: 0.6px solid #3d3d3d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  color: #111;
+  transition: background 0.15s;
+}
+
+.plp-action:hover .plp-action__icon {
+  background: #f0f0f0;
+}
+
+.plp-action--active .plp-action__icon {
+  background: #fff0e6;
+}
+
+.plp-action__label {
+  font-size: clamp(0.625rem, 0.9vw, 0.75rem);
+  color: #555;
+  white-space: nowrap;
+}
+
+.plp-action__count {
+  font-size: clamp(0.55rem, 0.8vw, 0.68rem);
+  color: #999;
+}
+
+/* Mobile FAB row — hidden on desktop, visible on mobile */
+.plp-fab-row {
+  display: none;
+  /* shown via media query below */
+}
+
+/* ─── RIGHT: info column ─── */
+.plp-info {
+  flex: 1 1 0;
+  min-width: 0;
+  /* flex column so content stays at top and bottom fills to match mainimg height */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.plp-info__title {
+  font-size: clamp(1.1rem, 2.2vw, 1.875rem);
+  font-weight: 500;
+  line-height: 1.25;
+  color: #000;
+  margin-bottom: 0.3rem;
+}
+
+.plp-info__subtitle {
+  font-size: clamp(0.8rem, 1.2vw, 0.9375rem);
   color: #777;
+  margin-top: 0.25rem;
 }
 
-.price-section {
+/* Price */
+.plp-info__price-row {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-top: 15px;
+  flex-wrap: wrap;
+  gap: clamp(0.4rem, 1.2vw, 0.9rem);
+  margin-top: clamp(0.75rem, 2vw, 1.125rem);
 }
 
-.price-section h1 {
-  font-size: 36px;
+.plp-info__price {
+  font-size: clamp(1.35rem, 2.8vw, 2.25rem);
+  font-weight: 400;
+  color: #000;
 }
 
-.discount-badge {
-  background: #ff4d4d;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
+.plp-info__original {
+  font-size: clamp(0.8rem, 1.3vw, 1rem);
+  color: #bbb;
+  text-decoration: line-through;
 }
 
-.cart-section {
+.plp-info__badge {
+  background: #F11616;
+  color: #ffffff;
+  padding: 0.25em 0.7em;
+  border-radius: 50px;
+  font-size: clamp(0.7rem, 1vw, 0.875rem);
+  font-weight: 400;
+}
+
+/* Cart row */
+.plp-info__cart-row {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-top: 20px;
+  gap: clamp(0.625rem, 2vw, 1rem);
+  margin-top: clamp(1rem, 2.5vw, 1.5rem);
+  flex-wrap: wrap;
 }
 
-.qty-box {
+/* Quantity control */
+.plp-qty {
   display: flex;
   align-items: center;
-  border: 1px solid #ddd;
+  border: 1.5px solid #d0d0d0;
   border-radius: 50px;
   overflow: hidden;
+  background: #fff;
+  flex-shrink: 0;
 }
 
-.qty-box button {
-  padding: 8px 15px;
+.plp-qty__btn {
+  padding: 0.85rem;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 1.2rem;
+  color: #444;
+  font-weight: 400;
+  line-height: 1;
+  transition: background 0.15s;
+  font-family: inherit;
 }
 
-.qty-box span {
-  padding: 0 20px;
+
+.plp-qty__val {
+  padding: 0 0.9em;
+  font-size: clamp(0.875rem, 1.3vw, 1rem);
+  font-weight: 400;
+  color: #111;
+  min-width: 1.8ch;
+  text-align: center;
 }
 
-.buy-now-btn {
-  margin-top: 20px;
-  width: 100%;
-  background: #ef6c00;
+/* Add to Cart */
+.plp-info__add-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: linear-gradient(135deg, #FAC74D 0%, #FAC74D 100%);
   border: none;
-  padding: 14px;
-  border-radius: 50px;
-  color: white;
-  font-size: 16px;
+  padding: 0.8em 1.5em;
+  border-radius: 18px;
+  color: #1a1a1a;
+  font-size: 1.1rem;
+  font-weight: 400;
   cursor: pointer;
+  letter-spacing: 0.02em;
+
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
 }
 
-.accordion {
-  margin-top: 30px;
+
+
+
+.plp-info__add-btn:active {
+  transform: translateY(0);
 }
 
-.accordion-item {
-  border: 1px solid #ddd;
-  border-radius: 15px;
-  margin-bottom: 15px;
+/* Buy Now */
+.plp-info__buy-btn {
+  width: 100%;
+  margin-top: 0.75rem;
+  background: linear-gradient(135deg, #EE751B 0%, #EE751B 100%);
+  border: none;
+  padding: 0.875em;
+  border-radius: 18px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+
+  transition: all 0.2s;
+  font-family: inherit;
 }
 
-.accordion-header {
-  padding: 15px;
+
+.plp-info__buy-btn:active {
+  transform: translateY(0);
+}
+
+/* Accordion */
+.plp-acc {
+  margin-top: clamp(1.25rem, 3vw, 1.875rem);
+}
+
+.plp-acc__item {
+  background: #fafafa;
+  border-radius: 0.9375rem;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+.plp-acc__header {
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  padding: clamp(0.7em, 1.5vw, 0.9375em) clamp(0.75em, 2vw, 0.9375em);
+  background: none;
+  border: none;
   cursor: pointer;
+  font-family: inherit;
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  color: #222;
+  text-align: left;
+  transition: background 0.15s;
 }
 
-.accordion-content {
-  padding: 15px;
-  background: #fafafa;
+.plp-acc__header:hover {
+  background: #f0f0f0;
 }
 
-.active-thumb {
-  border: 2px solid #ff7a00;
+.plp-acc__body {
+  padding: 0 clamp(0.75em, 2vw, 0.9375em) clamp(0.7em, 1.5vw, 0.9375em);
+  font-size: clamp(0.8rem, 1.1vw, 0.9375rem);
+  color: #555;
+  line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────────
+   REVIEWS
+───────────────────────────────────────────── */
+.plp-reviews {
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+}
+
+.plp-reviews__header {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  /* no padding-block here so divider truly touches the border lines */
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.plp-reviews__summary {
+  flex: 1.4 1 200px;
+  min-width: 0;
+  padding-right: clamp(1rem, 3vw, 2.5rem);
+  padding-block: clamp(1.5rem, 4vw, 3rem);
+}
+
+.plp-reviews__label {
+  font-size: clamp(0.9rem, 1.4vw, 1.2rem);
+  font-weight: 400;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.plp-reviews__score-row {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2.5vw, 2.5rem);
+  flex-wrap: wrap;
+}
+
+.plp-reviews__score-block {
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.plp-reviews__big-num {
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-weight: 400;
+  color: #000;
+  line-height: 1;
+}
+
+.plp-reviews__out-of {
+  font-size: clamp(0.875rem, 1.5vw, 1.4rem);
+  color: #999;
+  font-weight: 300;
+  margin-left: 0.2em;
+}
+
+.plp-reviews__count {
+  font-size: clamp(0.75rem, 1vw, 0.875rem);
+  color: #666;
+  margin-top: 0.6rem;
+}
+
+.plp-reviews__bars {
+  flex: 1 1 140px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.plp-reviews__bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.plp-reviews__bar-label {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: clamp(0.75rem, 1vw, 0.9rem);
+  min-width: 2.2rem;
+  flex-shrink: 0;
+}
+
+.plp-reviews__track {
+  flex: 1;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.plp-reviews__fill {
+  height: 100%;
+  background: #333;
+  border-radius: 4px;
+}
+
+.plp-reviews__pct {
+  font-size: clamp(0.65rem, 0.9vw, 0.78rem);
+  color: #999;
+  min-width: 2.4rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Vertical divider between summary and write */
+.plp-reviews__divider {
+  width: 1px;
+  background: #e0e0e0;
+  flex-shrink: 0;
+  align-self: stretch;
+  margin-inline: clamp(0.75rem, 1.8vw, 1.75rem);
+}
+
+.plp-reviews__write {
+  flex: 1 1 180px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.6rem;
+  padding-block: clamp(1.5rem, 4vw, 3rem);
+}
+
+.plp-reviews__write-title {
+  font-size: clamp(1rem, 1.8vw, 1.6rem);
+  font-weight: 400;
+  color: #333;
+}
+
+.plp-reviews__write-sub {
+  font-size: clamp(0.78rem, 1.1vw, 0.9rem);
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+
+.plp-reviews__write-btn {
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7em clamp(1.5em, 5vw, 3.5em);
+  font-size: clamp(0.8rem, 1.1vw, 0.9rem);
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: min(100%, 260px);
+}
+
+.plp-reviews__loading {
+  padding: 1rem 0;
+  color: #888;
+}
+
+/* Review cards container */
+.plp-reviews__cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+.plp-reviews__cards--scroll {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding-bottom: 0.5rem;
+}
+
+.plp-reviews__cards--scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Review card */
+.plp-rc {
+  flex: 1 1 clamp(300px, 45%, 520px);
+  background: #f7f7f7;
+  border: 1px solid #e6e6e6;
+  border-radius: 1.25rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  scroll-snap-align: start;
+  min-width: 0;
+}
+
+/* scroll mode: fixed card width so they're partially peeking */
+.plp-reviews__cards--scroll .plp-rc {
+  flex: 0 0 clamp(280px, 60vw, 500px);
+  max-width: none;
+}
+
+.plp-rc__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.plp-rc__user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.plp-rc__avatar {
+  width: clamp(38px, 4vw, 52px);
+  height: clamp(38px, 4vw, 52px);
+  border-radius: 50%;
+  background: #e4cfb8;
+  flex-shrink: 0;
+}
+
+.plp-rc__name {
+  font-size: clamp(0.875rem, 1.3vw, 1.05rem);
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.plp-rc__role {
+  font-size: clamp(0.7rem, 0.95vw, 0.82rem);
+  color: #888;
+  margin-top: 0.2rem;
+}
+
+.plp-rc__date {
+  font-size: clamp(0.7rem, 0.95vw, 0.82rem);
+  color: #aaa;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.plp-rc__stars {
+  letter-spacing: 0.25em;
+  font-size: clamp(0.9rem, 1.6vw, 1.2rem);
+}
+
+.plp-rc__text {
+  font-size: clamp(0.8rem, 1.1vw, 0.9rem);
+  line-height: 1.65;
+  color: #555;
+  flex-grow: 1;
+}
+
+.plp-rc__imgs {
+  display: flex;
+  gap: 0.6rem;
+  overflow: hidden;
+}
+
+.plp-rc__img {
+  width: clamp(56px, 9vw, 100px);
+  height: clamp(46px, 7vw, 78px);
+  background: #dcdcdc;
+  border-radius: 1rem;
+  flex-shrink: 0;
+}
+
+.plp-rc__bar {
+  height: 3px;
+  background: #e1e1e1;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+
+.plp-rc__bar-fill {
+  width: 20%;
+  height: 100%;
+  background: #2b2b2b;
+  border-radius: 10px;
+}
+
+/* ─────────────────────────────────────────────
+   YOU MIGHT ALSO LIKE
+───────────────────────────────────────────── */
+.plp-ymalk {
+  margin-top: clamp(2.5rem, 6vw, 5rem);
+  margin-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
+.plp-ymalk__title {
+  font-size: clamp(1.2rem, 2.5vw, 2rem);
+  font-weight: 400;
+  text-align: center;
+  color: #111;
+  margin-bottom: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+/* Auto-fill: creates 3 cols on desktop, 2 on tablet, 1 on mobile naturally */
+.plp-ymalk__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 220px));
+  gap: clamp(0.875rem, 3vw, 2.5rem);
+  justify-content: center;
+}
+
+.plp-ymalk__card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+
+
+.plp-ymalk__img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 7 / 6;
+  background: #ece9e9;
+  border-radius: 1rem;
+  padding: 0.55rem;
+  overflow: hidden;
+}
+
+.plp-ymalk__img {
+  width: 100%;
+  height: 100%;
+  background: #f9f7f7;
+  border-radius: 0.7rem;
+}
+
+.plp-ymalk__heart {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: clamp(24px, 2.5vw, 30px);
+  height: clamp(24px, 2.5vw, 30px);
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  font-size: 0.8rem;
+  z-index: 2;
+}
+
+
+
+.plp-ymalk__info {
+  padding: 0.6rem 0.15rem 0;
+}
+
+.plp-ymalk__name {
+  font-size: clamp(0.75rem, 1.1vw, 0.875rem);
+  color: #222;
+  line-height: 1.4;
+  margin-bottom: 0.35rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.plp-ymalk__stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.plp-ymalk__rcount {
+  font-size: clamp(0.65rem, 0.9vw, 0.72rem);
+  color: #aaa;
+  margin-left: 0.25rem;
+}
+
+.plp-ymalk__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.plp-ymalk__prices {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.plp-ymalk__price {
+  font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+  font-weight: 700;
+  color: #111;
+}
+
+.plp-ymalk__orig {
+  font-size: clamp(0.68rem, 0.9vw, 0.78rem);
+  color: #ccc;
+  text-decoration: line-through;
+}
+
+.plp-ymalk__badge {
+  background: #ffe3e3;
+  color: #cc0000;
+  font-size: clamp(0.6rem, 0.85vw, 0.7rem);
+  font-weight: 600;
+  padding: 0.15em 0.55em;
+  border-radius: 50px;
+}
+
+.plp-ymalk__btn {
+  background: #fff;
+  border: 1.5px solid #dadada;
+  color: #222;
+  font-size: clamp(0.68rem, 0.95vw, 0.78rem);
+  font-weight: 500;
+  padding: 0.4em 0.75em;
+  border-radius: 50px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+
+.plp-ymalk__btn--added {
+  background: #2ecc71;
+  border-color: #2ecc71;
+  color: #fff;
+}
+
+.plp-ymalk__footer {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(1.5rem, 4vw, 2.75rem);
+}
+
+.plp-ymalk__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid #dadada;
+  border-radius: 50px;
+  padding: 0.7em 1.75em;
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  font-weight: 400;
+  color: #222;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  font-family: inherit;
+}
+
+
+.plp-ymalk__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f07c23;
+  border-radius: 50%;
+  width: clamp(26px, 2.5vw, 34px);
+  height: clamp(26px, 2.5vw, 34px);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.plp-ymalk__view-all:hover .plp-ymalk__arrow {
+  background: #d96b18;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   NOTE: clamp() handles fluid scaling between these breakpoints.
+   These rules handle STRUCTURAL layout changes only.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 1024px: laptop / small desktop ─── */
+@media (max-width: 1024px) {
+  .plp-media {
+    flex: 0 0 clamp(260px, 48%, 500px);
+  }
+}
+
+/* ─── 768px: tablet (portrait + landscape) ─── */
+@media (max-width: 768px) {
+
+  /* Stack product grid vertically */
+  .plp-grid {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .plp-media {
+    flex: none;
+    width: 100%;
+    /* Restructure: thumbs below main image, actions hidden (use fab) */
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "mainimg"
+      "thumbs";
+  }
+
+  /* Restore aspect-ratio so image has height when desktop grid is gone */
+  .plp-mainimg {
+    aspect-ratio: 3 / 4;
+    height: auto;
+  }
+
+  /* Hide desktop action strip on tablet/mobile */
+  .plp-actions {
+    display: none;
+  }
+
+  /* Show mobile FAB row inside main image area */
+  .plp-fab-row {
+    display: flex;
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 0.625rem;
+    z-index: 10;
+  }
+
+  .plp-fab {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+    padding: 0.45em 0.85em;
+    font-size: clamp(0.75rem, 2.5vw, 0.875rem);
+    color: #222;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: background 0.15s;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .plp-fab:hover {
+    background: #fff;
+  }
+
+  .plp-fab--liked,
+  .plp-fab--wishlisted {
+    color: #e74c3c;
+  }
+
+  /* Thumbnails: horizontal row on tablet */
+  .plp-thumbs {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0.35rem;
+    border-radius: 0.875rem;
+  }
+
+  /* Right info takes full width */
+  .plp-info {
+    width: 100%;
+  }
+
+  /* Reviews header: 2 separate rows stacked */
+  .plp-reviews__header {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .plp-reviews__summary {
+    padding-right: 0;
+    padding-bottom: clamp(1rem, 3vw, 1.5rem);
+    border-bottom: 1px solid #e0e0e0;
+    flex: none;
+    width: 100%;
+  }
+
+  .plp-reviews__divider {
+    display: none;
+  }
+
+  .plp-reviews__write {
+    padding-top: clamp(1rem, 3vw, 1.5rem);
+    flex: none;
+    width: 100%;
+  }
+
+  /* Review cards: wrap to show all vertically on tablet */
+  .plp-reviews__cards {
+    flex-direction: column;
+  }
+
+  .plp-rc {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* YMALK: 2 columns on tablet */
+  .plp-ymalk__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ─── 480px: large phone ─── */
+@media (max-width: 480px) {
+
+  /* Even tighter page padding */
+  .plp-page {
+    padding-inline: clamp(0.875rem, 4vw, 1.25rem);
+  }
+
+  /* Thumbs: smaller squares */
+  .plp-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.625rem;
+  }
+
+  /* FAB row: 3 pills, smaller */
+  .plp-fab {
+    padding: 0.4em 0.7em;
+    font-size: 0.75rem;
+  }
+
+  /* Cart row: stack qty above button */
+  .plp-info__cart-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .plp-qty {
+    width: fit-content;
+    align-self: flex-start;
+  }
+
+  .plp-info__add-btn {
+    text-align: center;
+  }
+
+  /* YMALK: 1 column on small mobile */
+  .plp-ymalk__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .plp-ymalk__img-wrap {
+    aspect-ratio: 16 / 9;
+  }
+
+  /* Reviews big number smaller */
+  .plp-reviews__score-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .plp-rc__imgs {
+    flex-wrap: wrap;
+  }
+}
+
+/* ─── 360px: small phone ─── */
+@media (max-width: 360px) {
+  .plp-thumb {
+    width: 38px;
+    height: 38px;
+  }
+
+  .plp-fab-row {
+    gap: 0.4rem;
+  }
+
+  .plp-fab {
+    padding: 0.35em 0.6em;
+    font-size: 0.7rem;
+  }
+
+  .plp-rc__img {
+    width: 50px;
+    height: 40px;
+    border-radius: 0.5rem;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   ZOOM SAFETY NET
+   When user zooms in, viewport shrinks in CSS px
+   terms — same as making the window smaller.
+   Our fluid clamp() values already handle this,
+   but these extra rules catch edge cases where
+   the zoom makes it hit tablet/mobile breakpoints.
+   
+   KEY: we never use fixed px widths on containers,
+   so there's nothing to "break" during zoom.
+───────────────────────────────────────────── */
+
+/* Ensure images always stay within their container */
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent any single word from overflowing */
+.plp-info__title,
+.plp-info__subtitle,
+.plp-rc__text,
+.plp-ymalk__name {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
