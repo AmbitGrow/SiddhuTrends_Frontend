@@ -1,42 +1,226 @@
-.confirm-card {
-  background: #fff;
-  padding: 50px;
-  border-radius: 20px;
-  border: 1px solid #eee;
-  text-align: center;
+.checkout-page {
+  margin: 0px 250px;
+  margin-bottom: 70px;
 }
 
-.success-icon {
-  width: 70px;
-  height: 70px;
-  background: #4caf50;
-  color: white;
+.check-circle {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  margin-top: 70px;
+}
+
+.check-ring {
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
+  background: rgba(0, 255, 110, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
-  margin: 0 auto 20px;
+  position: relative;
 }
 
-.order-info {
-  margin: 30px 0;
-  background: #f8f8f8;
-  padding: 20px;
-  border-radius: 16px;
+.check-ring::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2.5px solid #007e2e;
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.confirm-buttons {
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.check-icon {
+  width: 75px;
+  height: 75px;
+  color: #007e2e;
+}
+.check-circle .check-title .c-t-thanku {
+  font-size: 38px;
+  letter-spacing: 1px;
+  margin-top: 20px;
+  color: #090909;
+}
+.check-circle .check-title .c-t-msg {
+  font-size: 25px;
+  letter-spacing: 1px;
+  margin-top: 15px;
+  color: #444444;
+}
+.check-circle .check-title .xp-badge {
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: #007e2e;
+  margin-top: 20px;
+}
+.order-id-date {
+  width: 100%;
+  height: 70px;
+  background-color: #fdfdfd;
+  border: 1px solid #dadada;
+  border-radius: 30px;
+  margin-top: 80px;
   display: flex;
-  gap: 15px;
+  align-items: center;
+  padding: 0px 40px;
+  justify-content: space-between;
+}
+.order-id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.order-id p,
+.order-date {
+  font-size: 22px;
+  letter-spacing: 0.5px;
+  color: #007e2e;
+}
+.order-id span,
+.order-date span {
+  font-weight: 550;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: #060606;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+
+.copy-btn:hover {
+  color: #1e8c1e;
+  background: #e8f9e8;
+}
+.copy-btn svg {
+  width: 15px;
+  height: 15px;
+}
+/* .product-card-order {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+} */
+.product-card-order {
+  width: 100%;
+  background-color: #fdfdfd;
+  border: 1px solid #dadada;
+  border-radius: 40px;
+  padding: 30px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+.product-row-order {
+  display: flex;
+  gap: 20px;
+}
+.product-thumb {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  background: #f0f0f0;
+  flex-shrink: 0;
+}
+
+.product-info {
+  margin-top: 5px;
+}
+
+.product-name {
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: #111111;
+  width: 80%;
+  line-height: 30px;
+}
+
+.product-meta-row {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.product-meta-item {
+  font-size: 17px;
+  color: #090909;
+  letter-spacing: 0.5px;
+}
+
+.product-meta-item span {
+  color: #636363;
+}
+
+.product-card-order .product-price p {
+  font-size: 22px;
+  font-weight: 900;
+  color: #111111;
+  margin-top: 5px;
+  letter-spacing: 0.5px;
+  margin-right: 10px;
+}
+
+.delivery-details-sec {
+  margin-top: 40px;
+}
+.delivery-details-box {
+  width: 100%;
+  background-color: #fdfdfd;
+  border: 1px solid #dadada;
+  border-radius: 40px;
+  padding: 30px;
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.delivery-details-row {
+  display: flex;
+  gap: 20px;
+}
+.delivery-details-row .row-icon {
+  background-color: #f8f8f8;
+  border: 1px solid #eaeaea;
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
-
-.secondary-btn {
-  padding: 18px 30px;
-  border-radius: 40px;
-  border: 1px solid #ee751b;
-  background: transparent;
-  color: #ee751b;
-  cursor: pointer;
+.delivery-details-row .row-icon img {
+  width: 25px;
+}
+.delivery-details-row p {
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  color: #636363;
+  width: 75%;
+  line-height: 30px;
+}
+.delivery-details-row span {
+  color: #0c0c0c;
 }
