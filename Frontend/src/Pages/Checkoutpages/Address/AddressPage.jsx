@@ -212,10 +212,10 @@ function AddressPage() {
         <div className="attribute-title">
           <p>Delivery Details</p>
         </div>
-        <div className="autofill-box">
+        {/* <div className="autofill-box">
           <p>Save time. Autofill your current location.</p>
           <button onClick={handleAutoFill}>Autofill</button>
-        </div>
+        </div> */}
         <div className="input-details">
           <div className="row1">
             <div

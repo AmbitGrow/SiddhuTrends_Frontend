@@ -4,7 +4,9 @@ import StepProgress from "../StepProgress";
 import { useCheckout } from "../../../context/CheckoutContext";
 import { useCart } from "../../../context/CartContext";
 import { useNavigate } from "react-router-dom";
-
+import { IoStar } from "react-icons/io5";
+import onlinepaymenticon from "../../../assets/Photos/onlinepayment.png";
+import cod from "../../../assets/Photos/cod.png";
 function OrderSummaryPage() {
   const { address, setPaymentMethod } = useCheckout();
   const { cartItems } = useCart();
@@ -31,24 +33,17 @@ function OrderSummaryPage() {
   // 🧮 Calculations
   const subtotal = cartItems.reduce(
     (acc, item) => acc + Number(item.price) * Number(item.quantity),
-    0
+    0,
   );
 
   const discount = Math.round((subtotal * discountPercent) / 100);
   const deliveryCharge = subtotal > 499 ? 0 : 40;
 
-  const totalAmount = Math.max(
-    subtotal - discount + deliveryCharge,
-    0
-  );
+  const totalAmount = Math.max(subtotal - discount + deliveryCharge, 0);
 
-  const advanceAmount =
-    selectedPayment === "COD" ? 20 : totalAmount;
+  const advanceAmount = selectedPayment === "COD" ? 20 : totalAmount;
 
-  const codRemaining =
-    selectedPayment === "COD"
-      ? totalAmount - 20
-      : 0;
+  const codRemaining = selectedPayment === "COD" ? totalAmount - 20 : 0;
 
   const applyCoupon = () => {
     if (coupon.trim() === "") return;
@@ -70,175 +65,200 @@ function OrderSummaryPage() {
 
     setPaymentMethod(selectedPayment);
 
-    // ✅ Go to Payment Page (NOT confirm)
     navigate("/checkout/payment");
   };
 
   return (
-    <div className="checkout-wrapper">
-      {/* <StepProgress step={2} /> */}
-
+    <div className="order-summary-page">
       <div className="summary-section">
-        {/* ADDRESS */}
-        <div className="deliver-header">
-          <h3>Delivering to</h3>
-          <button onClick={() => navigate("/checkout/address")}>
-            Change
-          </button>
+        <div className="deliver-header attribute-title">
+          <p>Delivering to</p>
+          <button onClick={() => navigate("/checkout/address")}>Change</button>
         </div>
 
         <div className="address-box">
-          <p className="name">
-            {address?.firstName}{" "}
-            <span className="home-tag">Home</span>
-          </p>
-          <p>{address?.addressLine}</p>
-          <p>
-            {address?.city}, {address?.state} -{" "}
+          <div className="name">
+            <p>{address?.firstName}</p>
+            <span className="name-tag">Home</span>
+          </div>
+          <p className="address-line">
+            {address?.addressLine} {address?.city} , {address?.state} -{" "}
             {address?.pincode}
           </p>
-          <p>{address?.phone}</p>
+          <p className="phone-number">{address?.phone}</p>
         </div>
 
-        {/* PRODUCT SUMMARY */}
-        <h3>Order Summary</h3>
-
-        <div className="product-summary-card">
-          {cartItems.map((item) => (
-            <div key={item.id} className="product-row">
-              <div className="product-img" />
-
-              <div className="product-info">
-                <div className="quantity-badge">
-                  {item.quantity}
+        <div className="order-summary-box">
+          <div className="attribute-title">
+            <p>Order Summary</p>
+          </div>
+          <div className="product-summary-card">
+            {cartItems.map((item) => (
+              <div key={item.id} className="product-row">
+                <div className="product-img-div">
+                  <div className="cart-product-img" />
+                  <div className="quantity-badge">{item.quantity}</div>
                 </div>
 
-                <p className="product-title">
-                  {item.name}
-                </p>
+                <div className="product-info">
+                  <p className="product-title">{item.name}</p>
+                  <div className="review-age">
+                    <div className="review">
+                      <div className="review-icon">
+                        <IoStar />
+                        <IoStar />
+                        <IoStar />
+                        <IoStar />
+                        <IoStar />
+                      </div>
+                      <div className="text">
+                        <p>({item.reviews} Reviews)</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="product-age-delivery-date">
+                    <div className="age age-date-title">
+                      <p>
+                        <span>Age: </span>
+                        {item.age}
+                      </p>
+                    </div>
+                    <div className="delivery-date age-date-title">
+                      <p className="delivery-text">
+                        <span>Estimated delivery</span> : 3–5 working days
+                      </p>
+                    </div>
+                  </div>
 
-                <div className="price-row">
-                  <span className="price">
-                    ₹{item.price}
-                  </span>
-                  <span className="strike">
-                    ₹{item.originalPrice ||
-                      item.price + 200}
-                  </span>
+                  <div className="price-row">
+                    <p className="price">₹{item.price}</p>
+                    <p className="strike">
+                      ₹{item.originalPrice || item.price + 200}
+                    </p>
+                  </div>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-                <p className="delivery-text">
-                  🚚 Estimated delivery :
-                  3–5 working days
+        <div className="coupon-box">
+          <div className="attribute-title">
+            <p>Have a coupon ?</p>
+          </div>
+          <div className="coupon-section">
+            <input
+              placeholder="Add coupon code"
+              value={coupon}
+              onChange={(e) => setCoupon(e.target.value)}
+            />
+            <button onClick={applyCoupon}>Apply</button>
+          </div>
+        </div>
+
+        <div className="payment-method-box">
+          <div className="attribute-title">
+            <p>Payment Method</p>
+          </div>
+          <div className="payment-method-option">
+            <div
+              className={`payment-option ${
+                selectedPayment === "ONLINE" ? "active" : ""
+              }`}
+              onClick={() => setSelectedPayment("ONLINE")}
+            >
+              <div className="option-icon">
+                <img src={onlinepaymenticon}></img>
+              </div>
+              <div>
+                <p className="method-title">Online Payment</p>
+                <p className="method-option-paragraph">
+                  Pay securely using UPI / Cards
                 </p>
+                <p className="method-xp-point">Get upto 400XP points</p>
+              </div>
+              <div className="payment-select-active">
+                <p>Select</p>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* COUPON */}
-        <h4>Have a coupon ?</h4>
-        <div className="coupon-section">
-          <input
-            placeholder="Add coupon code"
-            value={coupon}
-            onChange={(e) =>
-              setCoupon(e.target.value)
-            }
-          />
-          <button onClick={applyCoupon}>
-            Apply
-          </button>
-        </div>
-
-        {/* PAYMENT METHOD */}
-        <h4>Payment Method</h4>
-
-        <div
-          className={`payment-option ${
-            selectedPayment === "ONLINE"
-              ? "active"
-              : ""
-          }`}
-          onClick={() =>
-            setSelectedPayment("ONLINE")
-          }
-        >
-          <div>
-            <p>Online Payment</p>
-            <span>
-              Pay securely using UPI / Cards
-            </span>
-          </div>
-        </div>
-
-        <div
-          className={`payment-option ${
-            selectedPayment === "COD"
-              ? "active"
-              : ""
-          }`}
-          onClick={() =>
-            setSelectedPayment("COD")
-          }
-        >
-          <div>
-            <p>Cash On Delivery</p>
-            <span>
-              ₹20 advance payment required.
-            </span>
-          </div>
-        </div>
-
-        {/* PAYMENT SUMMARY */}
-        <h4>Payment Summary</h4>
-
-        <div className="payment-summary-card">
-          <div className="row">
-            <span>Subtotal</span>
-            <span>₹{subtotal}</span>
-          </div>
-
-          <div className="row red">
-            <span>
-              Discount (-{discountPercent}%)
-            </span>
-            <span>-₹{discount}</span>
-          </div>
-
-          <div className="row">
-            <span>Delivery charge</span>
-            <span>₹{deliveryCharge}</span>
-          </div>
-
-          <div className="divider" />
-
-          <div className="total-row">
-            <span>Total Amount</span>
-            <span>₹{totalAmount}</span>
-          </div>
-
-          {selectedPayment === "COD" && (
-            <>
-              <div className="row">
-                <span>
-                  Pay Now (Advance)
-                </span>
-                <span>
-                  ₹{advanceAmount}
-                </span>
+            <div
+              className={`payment-option ${
+                selectedPayment === "COD" ? "active" : ""
+              }`}
+              onClick={() => setSelectedPayment("COD")}
+            >
+              <div className="option-icon">
+                <img src={cod}></img>
               </div>
-
-              <div className="row">
-                <span>
-                  Pay on Delivery (COD)
-                </span>
-                <span>
-                  ₹{codRemaining}
-                </span>
+              <div>
+                <p className="method-title">Cash On Delivery</p>
+                <p className="method-option-paragraph">
+                  ₹20 advance payment required. Remaining amount payable on
+                  delivery
+                </p>
               </div>
-            </>
-          )}
+              <div className="payment-select-active">
+                <p>Select</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="payment-summary-box">
+          <div className="attribute-title">
+            <p>Payment Method</p>
+          </div>
+          <div className="payment-summary-card">
+            <div className="payment-attribute-row">
+              <span className="row-text">Subtotal</span>
+              <span className="row-text row-text-value">₹{subtotal}</span>
+            </div>
+
+            <div className="payment-attribute-row row-red">
+              <span className="row-text">Discount (-{discountPercent}%)</span>
+              <span className="row-text row-text-value">-₹{discount}</span>
+            </div>
+
+            <div className="payment-attribute-row">
+              <span className="row-text">Delivery charge</span>
+              <span className="row-text row-text-value">₹{deliveryCharge}</span>
+            </div>
+
+            <div className="payment-summary-hr" />
+
+            <div className="payment-attribute-row total-row">
+              <span className="row-text">Total Amount</span>
+              <span className="row-text row-text-value">₹{totalAmount}</span>
+            </div>
+
+            {selectedPayment === "COD" && (
+              <div className="cod-method-all">
+                <div className="payment-cod-row">
+                  <span className="row-text">Payment Method</span>
+                  <div className="payment-method">
+                    <img src={cod}></img>
+                    <span className="row-text row-text-value">
+                      Cash On Delivery
+                    </span>
+                  </div>
+                </div>
+                <div className="payment-cod-row">
+                  <span className="row-text">Pay Now (Advance)</span>
+                  <span className="row-text row-text-value">
+                    ₹{advanceAmount}
+                  </span>
+                </div>
+
+                <div className="payment-cod-row">
+                  <span className="row-text">Pay on Delivery (COD)</span>
+                  <span className="row-text row-text-value">
+                    ₹{codRemaining}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <button
@@ -246,15 +266,17 @@ function OrderSummaryPage() {
           onClick={handleConfirm}
           disabled={totalAmount === 0}
         >
-          Continue to Payment →
+          <p>{selectedPayment === "COD"
+            ? "Confirm Order & Pay 20"
+            : "Continue to Payment"}</p>
         </button>
       </div>
     </div>
-
-    // <div>
-
-    // </div>
   );
 }
 
 export default OrderSummaryPage;
+
+
+
+
