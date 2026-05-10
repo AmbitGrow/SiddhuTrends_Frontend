@@ -1,194 +1,514 @@
-import React, { useState } from "react";
-import { GoArrowLeft } from "react-icons/go";
-import { AiOutlineLike } from "react-icons/ai";
-import { FaRegHeart, FaHeart } from "react-icons/fa";
-import { GoShareAndroid } from "react-icons/go";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { useParams, useNavigate } from "react-router-dom";
-import { useCart } from "../../context/CartContext";
+import React, { useState, useMemo } from "react";
 import "./ProductListpage.css";
-import { getProductById } from "../../services/ProductService";
+import { GoArrowLeft } from "react-icons/go";
+import { LuSearch } from "react-icons/lu";
+import { FaHeart } from "react-icons/fa";
+import filterlogo from "../../assets/Photos/filterlogo.png";
+import deliverylogo from "../../assets/Photos/delivery.png";
+import { BiSort } from "react-icons/bi";
+import { IoStar } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
+import { getAllProducts } from "../../services/ProductService";
 
 function ProductListpage() {
-  const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();  
+  const { addToCart } = useCart();
+  /* ---------------- PRODUCT DATA ---------------- */
 
-  const product = getProductById(id);
+  const [open, setOpen] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState("Sort by custom");
+  const productsData = getAllProducts();
 
-  if (!product) return <h2>Product not found</h2>;
-
-  const discount = Math.round(
-    ((product.originalPrice - product.price) / product.originalPrice) * 100,
-  );
-
+  const selectOption = (value) => {
+    setSortOption(value);
+    setOpen(false);
+  };
   /* ---------------- STATES ---------------- */
 
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
-  const [quantity, setQuantity] = useState(1);
-  const [liked, setLiked] = useState(false);
-  const [wishlist, setWishlist] = useState(false);
-  const [likesCount, setLikesCount] = useState(1000);
-  const [openSection, setOpenSection] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAge, setSelectedAge] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [availability, setAvailability] = useState("");
+  const [discountFilter, setDiscountFilter] = useState([]);
+  const [priceOptions, setPriceOptions] = useState([]);
+  const [minPrice, setMinPrice] = useState(100);
+  const [maxPrice, setMaxPrice] = useState(800);
+  const [sortOption, setSortOption] = useState("default");
+  const [wishlist, setWishlist] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  /* ---------------- FUNCTIONS ---------------- */
+  const productsPerPage = 5;
 
-  const toggleLike = () => {
-    setLiked(!liked);
-    setLikesCount(liked ? likesCount - 1 : likesCount + 1);
+  /* ---------------- CLEAR FILTER ---------------- */
+
+  const clearFilters = () => {
+    setSelectedAge([]);
+    setSelectedCategory([]);
+    setAvailability("");
+    setDiscountFilter([]);
+    setPriceOptions([]);
+    setMinPrice(100);
+    setMaxPrice(800);
+    setSearchTerm("");
+    setCurrentPage(1);
   };
 
-  const toggleWishlist = () => {
-    setWishlist(!wishlist);
-  };
+  /* ---------------- MULTI SELECT ---------------- */
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      await navigator.share({
-        title: product.name,
-        url: window.location.href,
-      });
+  const handleMultiSelect = (value, state, setState) => {
+    if (state.includes(value)) {
+      setState(state.filter((item) => item !== value));
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Link copied!");
+      setState([...state, value]);
     }
+    setCurrentPage(1);
   };
 
-  const increaseQty = () => setQuantity(quantity + 1);
-  const decreaseQty = () => {
-    if (quantity > 1) setQuantity(quantity - 1);
-  };
+  /* ---------------- FILTER LOGIC ---------------- */
 
-  const toggleAccordion = (section) => {
-    setOpenSection(openSection === section ? null : section);
-  };
+  const filteredProducts = useMemo(() => {
+    return productsData
+      .filter((product) => {
+        const matchSearch = product.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
-  const handleAddToCart = () => {
-    addToCart({ ...product, quantity });
-    alert("Added to cart");
-  };
+        const matchAge =
+          selectedAge.length === 0 || selectedAge.includes(product.age);
 
-  const buyNow = () => {
-    addToCart({ ...product, quantity });
-    navigate("/checkout/address");
+        const matchCategory =
+          selectedCategory.length === 0 ||
+          selectedCategory.includes(product.category);
+
+        const matchAvailability =
+          availability === ""
+            ? true
+            : availability === "in"
+              ? product.inStock
+              : !product.inStock;
+
+        const matchDiscount =
+          discountFilter.length === 0 ||
+          discountFilter.some((d) => product.discount >= d);
+
+        const matchRange =
+          product.price >= minPrice && product.price <= maxPrice;
+
+        const matchPriceOption =
+          priceOptions.length === 0 ||
+          (priceOptions.includes("under500") && product.price <= 500) ||
+          (priceOptions.includes("over500") && product.price > 500);
+
+        return (
+          matchSearch &&
+          matchAge &&
+          matchCategory &&
+          matchAvailability &&
+          matchDiscount &&
+          matchRange &&
+          matchPriceOption
+        );
+      })
+      .sort((a, b) => {
+        if (sortOption === "low-high") return a.price - b.price;
+        if (sortOption === "high-low") return b.price - a.price;
+        return 0;
+      });
+  }, [
+    searchTerm,
+    selectedAge,
+    selectedCategory,
+    availability,
+    discountFilter,
+    priceOptions,
+    minPrice,
+    maxPrice,
+    sortOption,
+  ]);
+
+  /* ---------------- PAGINATION ---------------- */
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const displayedProducts = filteredProducts.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage,
+  );
+
+  const toggleWishlist = (id) => {
+    if (wishlist.includes(id)) {
+      setWishlist(wishlist.filter((item) => item !== id));
+    } else {
+      setWishlist([...wishlist, id]);
+    }
   };
 
   /* ---------------- JSX ---------------- */
 
   return (
-    <div className="product-list-page-container">
-      {/* BACK SECTION */}
+    <div className="productpage-container">
       <div className="back-page-btn">
-        <div className="back" onClick={() => navigate(-1)}>
+        <div className="back">
           <GoArrowLeft className="back-arrow-icon" />
           <p>Back</p>
         </div>
+        <div className="directory">
+          <p className="visited">Products</p>
+          <span>&gt;&gt;</span>
+          <p className="visited">Car</p>
+          <span>&gt;&gt;</span>
+          <p>Battery Car</p>
+        </div>
       </div>
 
-      <div className="product-view-section">
-        {/* LEFT SIDE */}
-        <div className="left-side">
-          <div className="product-view">
-            <div className="three-product-img">
-              {product.images.map((img, index) => (
-                <div
-                  key={index}
-                  className={`img-div ${
-                    selectedImage === img ? "active-thumb" : ""
-                  }`}
-                  onClick={() => setSelectedImage(img)}
-                ></div>
-              ))}
-            </div>
+      <div className="search-btn">
+        <LuSearch className="search-icon" />
+        <input
+          type="text"
+          placeholder="Search product"
+          className="search-input"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
-            <div className="like-share">
-              <div className="like-share-btn" onClick={toggleLike}>
-                <div className="like-share-icon">
-                  <AiOutlineLike />
-                </div>
-                <p>
-                  {liked ? `Liked - ${likesCount}` : `Like - ${likesCount}`}
-                </p>
-              </div>
-
-              <div className="like-share-btn" onClick={toggleWishlist}>
-                <div className="like-share-icon">
-                  {wishlist ? <FaHeart color="red" /> : <FaRegHeart />}
-                </div>
-                <p>Wishlist</p>
-              </div>
-
-              <div className="like-share-btn" onClick={handleShare}>
-                <div className="like-share-icon">
-                  <GoShareAndroid />
-                </div>
-                <p>Share</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="product-show-section">
-            <div className="product-main-img"></div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="right-side">
-          <h2>{product.name}</h2>
-          <p className="subtitle">{product.subtitle}</p>
-
-          <div className="price-section">
-            <h1>₹{product.price}.00</h1>
-            <span className="strike">₹{product.originalPrice}.00</span>
-            <span className="discount-badge">{discount}% off</span>
-          </div>
-
-          {/* QUANTITY + CART */}
-          <div className="cart-section">
-            <div className="qty-box">
-              <button onClick={decreaseQty}>-</button>
-              <span>{quantity}</span>
-              <button onClick={increaseQty}>+</button>
-            </div>
-
-            <button className="add-cart-btn" onClick={handleAddToCart}>
-              Add to Cart
+      <div className="product-section">
+        {/* FILTER SECTION */}
+        <div className="filter-section">
+          <div className="filter-title">
+            <img src={filterlogo} alt="filter" />
+            <p>Filter</p>
+            <button className="clear-btn" onClick={clearFilters}>
+              Clear
             </button>
           </div>
 
-          <button className="buy-now-btn" onClick={buyNow}>
-            Buy Now
-          </button>
+          <div className="filter-section-line-type1"></div>
 
-          {/* ACCORDION */}
-          <div className="accordion">
-            {[
-              { key: "desc", title: "Description", value: product.description },
-              { key: "how", title: "How to play", value: product.howToPlay },
-              {
-                key: "delivery",
-                title: "Delivery details",
-                value: product.delivery,
-              },
-            ].map((item) => (
-              <div className="accordion-item" key={item.key}>
+          {/* AGE */}
+          <div className="age-filter filter-type">
+            <div className="filter-title">
+              <p>Age</p>
+            </div>
+            <div className="checkbox-menu">
+              {[
+                "0 - 12 months",
+                "1 - 3 years",
+                "3 - 5 years",
+                "5 - 8 years",
+                "8 - 12 years",
+              ].map((age) => (
+                <label key={age} className="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedAge.includes(age)}
+                    onChange={() =>
+                      handleMultiSelect(age, selectedAge, setSelectedAge)
+                    }
+                  />
+                  <span className="checkmark"></span>
+                  <p>{age}</p>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="filter-section-line-type2"></div>
+          <div className="filter-section-line-type3"></div>
+
+          {/* PRICE OPTIONS */}
+          <div className="price-filter filter-type">
+            <div className="filter-title">
+              <p>Price</p>
+            </div>
+            <div className="checkbox-menu checkbox-menu-price">
+              <label className="custom-checkbox">
+                <input
+                  type="checkbox"
+                  checked={priceOptions.includes("under500")}
+                  onChange={() =>
+                    handleMultiSelect("under500", priceOptions, setPriceOptions)
+                  }
+                />
+                <span className="checkmark"></span>
+                <p>Under ₹500</p>
+              </label>
+
+              <label className="custom-checkbox">
+                <input
+                  type="checkbox"
+                  checked={priceOptions.includes("over500")}
+                  onChange={() =>
+                    handleMultiSelect("over500", priceOptions, setPriceOptions)
+                  }
+                />
+                <span className="checkmark"></span>
+                <p>Over ₹500</p>
+              </label>
+            </div>
+            <div className="price-slider-section">
+              <div className="price-display">
+                ₹{minPrice} - ₹{maxPrice}
+              </div>
+
+              <div className="range-slider">
+                <input
+                  type="range"
+                  min="0"
+                  max="1000"
+                  value={minPrice}
+                  onChange={(e) =>
+                    setMinPrice(Math.min(Number(e.target.value), maxPrice - 10))
+                  }
+                />
+                <input
+                  type="range"
+                  min="0"
+                  max="1000"
+                  value={maxPrice}
+                  onChange={(e) =>
+                    setMaxPrice(Math.max(Number(e.target.value), minPrice + 10))
+                  }
+                />
+                <div className="slider-track"></div>
                 <div
-                  className="accordion-header"
-                  onClick={() => toggleAccordion(item.key)}
+                  className="slider-range"
+                  style={{
+                    left: `${(minPrice / 1000) * 100}%`,
+                    right: `${100 - (maxPrice / 1000) * 100}%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div className="filter-section-line-type2"></div>
+          <div className="filter-section-line-type3"></div>
+
+          {/* DISCOUNT */}
+          <div className="discount-filter filter-type">
+            <div className="filter-title">
+              <p>Discount</p>
+            </div>
+            <div className="checkbox-menu checkbox-menu-discount">
+              {[10, 30].map((d) => (
+                <label key={d} className="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={discountFilter.includes(d)}
+                    onChange={() =>
+                      handleMultiSelect(d, discountFilter, setDiscountFilter)
+                    }
+                  />
+                  <span className="checkmark"></span>
+                  <p> {d}% or more</p>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-section-line-type2"></div>
+          <div className="filter-section-line-type3"></div>
+
+          {/* CATEGORY */}
+          <div className="product-category-filter filter-type">
+            <div className="filter-title">
+              <p>Product Category</p>
+            </div>
+            <div className="checkbox-menu checkbox-menu-product-category">
+              {["Car", "Bike", "Educational Toy", "Wooden Toys"].map((cat) => (
+                <label key={cat} className="custom-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedCategory.includes(cat)}
+                    onChange={() =>
+                      handleMultiSelect(
+                        cat,
+                        selectedCategory,
+                        setSelectedCategory,
+                      )
+                    }
+                  />
+                  <span className="checkmark"></span>
+                  <p> {cat}</p>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-section-line-type2"></div>
+          <div className="filter-section-line-type3"></div>
+
+          {/* AVAILABILITY */}
+          <div className="availability-filter filter-type">
+            <div className="filter-title">
+              <p>Availability</p>
+            </div>
+            <div className="checkbox-menu checkbox-menu-price">
+              <label className="custom-checkbox">
+                <input
+                  type="radio"
+                  name="availability"
+                  onChange={() => setAvailability("in")}
+                />
+                <span className="checkmark"></span>
+                <p> In Stock</p>
+              </label>
+              <label className="custom-checkbox">
+                <input
+                  type="radio"
+                  name="availability"
+                  onChange={() => setAvailability("out")}
+                />
+                <span className="checkmark"></span>
+                <p> Out of Stock</p>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* PRODUCT LIST */}
+        <div className="product-list-section">
+          <div className="top-bar">
+            <p>
+              Showing {displayedProducts.length} of {filteredProducts.length}{" "}
+              results
+            </p>
+
+            <div className="sortbycustom" onClick={() => setOpen(!open)}>
+              <BiSort className="sort-icon" />
+
+              <span>
+                {sortOption === "low-high"
+                  ? "Price: Low to High"
+                  : sortOption === "high-low"
+                    ? "Price: High to Low"
+                    : "Sort by custom"}
+              </span>
+
+              {open && (
+                <div
+                  className="custom-dropdown"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {item.title}
-                  {openSection === item.key ? (
-                    <IoIosArrowUp />
-                  ) : (
-                    <IoIosArrowDown />
-                  )}
+                  <div onClick={() => selectOption("low-high")}>
+                    Price: Low to High
+                  </div>
+                  <div onClick={() => selectOption("high-low")}>
+                    Price: High to Low
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="product-card-container">
+            {displayedProducts.map((product) => (
+              <div
+                className="product-card"
+                key={product.id}
+                onClick={() => navigate(`/products/${product.id}`)}
+              >
+                <div className="product-img">
+                  {/* ❤️ Wishlist */}
+                  <div
+                    className="p-wishlist"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWishlist(product.id);
+                    }}
+                  >
+                    <FaHeart
+                      className={
+                        wishlist.includes(product.id)
+                          ? "p-wishlist-icon active"
+                          : "p-wishlist-icon"
+                      }
+                    />
+                  </div>
                 </div>
 
-                {openSection === item.key && (
-                  <div className="accordion-content">{item.value}</div>
-                )}
+                <div className="product-details">
+                  <div className="product-name">
+                    <p>{product.name}</p>
+                  </div>
+
+                  <div className="second-review-age">
+                    <div className="review">
+                      <div className="review-icon">
+                        <IoStar />
+                        <IoStar />
+                        <IoStar />
+                        <IoStar />
+                        <IoStar />
+                      </div>
+                      <div className="text">
+                        <p>({product.reviews} Reviews)</p>
+                      </div>
+                    </div>
+
+                    <div className="age">
+                      <p>
+                        <span>Age: </span>
+                        {product.age}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="price-details">
+                    <p className="price">₹{product.price}</p>
+                    <p className="strike">₹{product.originalPrice}</p>
+
+                    <span className="discount-badge">-{product.discount}%</span>
+                  </div>
+
+                  <div className="delivery">
+                    <img src={deliverylogo} alt="delivery" />
+                    <p>
+                      <span>Estimated delivery : </span> 3 - 5 working days
+                    </p>
+                  </div>
+
+                  <button
+                    className="add-cart-to-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(product);
+                    }}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             ))}
+          </div>
+          <div className="pagination-container">
+            <div className="pagination">
+              <button
+                className="nav-btn"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                &lt; Previous
+              </button>
+
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  className={`page-btn ${currentPage === i + 1 ? "active-page" : ""}`}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                className="nav-btn"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Next &gt;
+              </button>
+            </div>
           </div>
         </div>
       </div>
