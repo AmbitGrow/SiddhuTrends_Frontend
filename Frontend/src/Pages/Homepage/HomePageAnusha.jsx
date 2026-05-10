@@ -3,15 +3,18 @@ import { useNavigate } from "react-router-dom";
 import "./HomePageAnusha.css";
 
 // ─── placeholder image paths (swap with real assets) ───────────────────────
-import baby      from "../../assets/Photos/baby.png";
+import baby from "../../assets/Photos/baby.png";
 import cheerKids from "../../assets/Photos/cheerKids.png";
-import dress1    from "../../assets/Photos/dress1.png";
-import giftbox   from "../../assets/Photos/gift-box 1.png";
-import train     from "../../assets/Photos/train.png";
-import wheel     from "../../assets/Photos/wheels.png";
-import bluebaby  from "../../assets/Photos/bluebaby.png";
-import hands     from "../../assets/Photos/hands.png";
+import dress1 from "../../assets/Photos/dress1.png";
+import giftbox from "../../assets/Photos/gift-box 1.png";
+import train from "../../assets/Photos/train.png";
+import wheel from "../../assets/Photos/wheels.png";
+import bluebaby from "../../assets/Photos/bluebaby.png";
+import babyacc from "../../assets/Photos/babyacc.png";
+import hands from "../../assets/Photos/hands.png";
 import sleepbaby from "../../assets/Photos/sleepbaby.png";
+import towelbaby from "../../assets/Photos/towelbaby.png";
+import blankets from "../../assets/Photos/blankets.png";
 
 // ─── tiny helpers ───────────────────────────────────────────────────────────
 const StarRating = ({ count = 5 }) => (
@@ -22,11 +25,19 @@ const StarRating = ({ count = 5 }) => (
   </span>
 );
 
-const ProductCard = ({ name = "LED Police Supercar Toy for Kids Light up 911 Patrol Car", price = 259, oldPrice = 500, discount = 30, reviews = 35 }) => (
+const ProductCard = ({
+  name = "LED Police Supercar Toy for Kids Light up 911 Patrol Car",
+  price = 259,
+  oldPrice = 500,
+  discount = 30,
+  reviews = 35,
+}) => (
   <div className="fav-product-card">
     <div className="fav-image-border">
       <div className="fav-img-box">
-        <button className="fav-heart" aria-label="Wishlist">♡</button>
+        <button className="fav-heart" aria-label="Wishlist">
+          ♡
+        </button>
       </div>
     </div>
     <h3 className="fav-product-name">{name}</h3>
@@ -49,7 +60,9 @@ const ComboCard = () => (
     <div className="combo-sale">SALE</div>
     <div className="combo-img-box"></div>
     <div className="combo-content">
-      <p className="combo-title">Duck Sliding Toy Musical Climbing Track (Pack of 3)</p>
+      <p className="combo-title">
+        Duck Sliding Toy Musical Climbing Track (Pack of 3)
+      </p>
       <div className="combo-price-row">
         <span className="combo-price">₹259</span>
         <span className="combo-old">₹500</span>
@@ -64,7 +77,7 @@ const ComboCard = () => (
 function useCountdown(targetSeconds) {
   const [time, setTime] = useState(targetSeconds);
   useEffect(() => {
-    const id = setInterval(() => setTime(t => (t > 0 ? t - 1 : 0)), 1000);
+    const id = setInterval(() => setTime((t) => (t > 0 ? t - 1 : 0)), 1000);
     return () => clearInterval(id);
   }, []);
   const d = Math.floor(time / 86400);
@@ -76,29 +89,93 @@ function useCountdown(targetSeconds) {
 
 // ─── Carousel slides data ────────────────────────────────────────────────────
 const SLIDES = [
-  { key: "yellow",  title: "Saravanan, still looking for these?", sub: "Based on your recent views",   items: ["Soft Cotton Shirts", "Soft Cotton Shirts", "Soft Cotton Shirts", "Soft Cotton Shirts"] },
-  { key: "purple",  title: "New Arrivals",                        sub: "Fresh picks your little ones will love", items: ["Woodlen Car Toy", "Woodlen Car Toy", "Woodlen Car Toy", "Woodlen Car Toy"] },
-  { key: "multi",   title: "Trending Now",                        sub: "Fresh picks your little ones will love", items: ["Woodlen Car Toy", "Woodlen Car Toy", "Woodlen Car Toy", "Woodlen Car Toy"] },
+  {
+    key: "yellow",
+    title: "Saravanan, still looking for these?",
+    sub: "Based on your recent views",
+    items: [
+      "Soft Cotton Shirts",
+      "Soft Cotton Shirts",
+      "Soft Cotton Shirts",
+      "Soft Cotton Shirts",
+    ],
+  },
+  {
+    key: "purple",
+    title: "New Arrivals",
+    sub: "Fresh picks your little ones will love",
+    items: [
+      "Woodlen Car Toy",
+      "Woodlen Car Toy",
+      "Woodlen Car Toy",
+      "Woodlen Car Toy",
+    ],
+  },
+  {
+    key: "multi",
+    title: "Trending Now",
+    sub: "Fresh picks your little ones will love",
+    items: [
+      "Woodlen Car Toy",
+      "Woodlen Car Toy",
+      "Woodlen Car Toy",
+      "Woodlen Car Toy",
+    ],
+  },
 ];
 
 // ─── Review cards data ───────────────────────────────────────────────────────
 const REVIEWS = [
-  { text: "The toy quality is really good and exactly as shown. My son was very happy, and delivery was on time. COD option made me feel safe ordering.", name: "Ramesh Kumar", role: "Father of a 4 year old", location: "Coimbatore", color: "" },
-  { text: "Good packaging, safe toys, and quick delivery. I will definitely order again for birthdays and festivals.", name: "Meera R", role: "Mother of two kids", location: "Salem", color: "" },
-  { text: "I was confused what toy to buy, but the age-based section helped me a lot. My daughter loved the toy and keeps playing with it daily.", name: "Meera R", role: "Mother of two kids", location: "Salem", color: "" },
-  { text: "My teddy is so soft, I sleep with it.", name: "Nila", role: "Age 4", location: "", color: "green", quote: true },
-  { text: "Good packaging, safe toys, and quick delivery. I will definitely order again for birthdays and festivals.", name: "Meera R", role: "Mother of two kids", location: "Salem", color: "" },
+  {
+    text: "The toy quality is really good and exactly as shown. My son was very happy, and delivery was on time. COD option made me feel safe ordering.",
+    name: "Ramesh Kumar",
+    role: "Father of a 4 year old",
+    location: "Coimbatore",
+    color: "",
+  },
+  {
+    text: "Good packaging, safe toys, and quick delivery. I will definitely order again for birthdays and festivals.",
+    name: "Meera R",
+    role: "Mother of two kids",
+    location: "Salem",
+    color: "",
+  },
+  {
+    text: "I was confused what toy to buy, but the age-based section helped me a lot. My daughter loved the toy and keeps playing with it daily.",
+    name: "Meera R",
+    role: "Mother of two kids",
+    location: "Salem",
+    color: "",
+  },
+  {
+    text: "My teddy is so soft, I sleep with it.",
+    name: "Nila",
+    role: "Age 4",
+    location: "",
+    color: "green",
+    quote: true,
+  },
+  {
+    text: "Good packaging, safe toys, and quick delivery. I will definitely order again for birthdays and festivals.",
+    name: "Meera R",
+    role: "Mother of two kids",
+    location: "Salem",
+    color: "",
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
 export default function Homepage() {
   const navigate = useNavigate();
-  const scrollRef    = useRef(null);
+  const scrollRef = useRef(null);
   const [slide, setSlide] = useState(0);
-  const [days, hours, mins, secs] = useCountdown(5 * 86400 + 22 * 3600 + 45 * 60 + 14);
+  const [days, hours, mins, secs] = useCountdown(
+    5 * 86400 + 22 * 3600 + 45 * 60 + 14,
+  );
 
-  const nextSlide = () => setSlide(p => (p + 1) % SLIDES.length);
-  const prevSlide = () => setSlide(p => (p - 1 + SLIDES.length) % SLIDES.length);
+  const nextSlide = () => setSlide((p) => (p + 1) % SLIDES.length);
+  const prevSlide = () =>
+    setSlide((p) => (p - 1 + SLIDES.length) % SLIDES.length);
 
   const scrollCategories = () =>
     scrollRef.current?.scrollBy({ left: 300, behavior: "smooth" });
@@ -114,7 +191,9 @@ export default function Homepage() {
         <div className="hero-container">
           <div className="hero-left">
             <h1>
-              Bring&nbsp;joy to every<br />little playtime.
+              Bring&nbsp;joy to every
+              <br />
+              little playtime.
             </h1>
             <p className="hero-subtext">
               Carefully selected toys that inspire learning, creativity, and
@@ -127,20 +206,20 @@ export default function Homepage() {
 
           <div className="hero-right">
             <div className="trusted-box">
-              <div className="avatar-group">
-                <div className="avatar" />
-                <div className="avatar" />
-                <div className="avatar" />
-              </div>
-              <div>
+              <div className="trusted-top">
+                <div className="avatar-group">
+                  <div className="avatar" />
+                  <div className="avatar" />
+                  <div className="avatar" />
+                </div>
                 <p className="trusted-title">
                   Trusted by <strong>Happy Parents</strong>
                 </p>
-                <p className="trusted-desc">
-                  Toys that bring joy, learning, and safe play into everyday
-                  childhood moments.
-                </p>
               </div>
+              <p className="trusted-desc">
+                Toys that bring joy, learning, and safe play into everyday
+                childhood moments.
+              </p>
             </div>
           </div>
         </div>
@@ -208,7 +287,11 @@ export default function Homepage() {
               </div>
             ))}
           </div>
-          <button className="scroll-btn" onClick={scrollCategories} aria-label="Scroll right">
+          <button
+            className="scroll-btn"
+            onClick={scrollCategories}
+            aria-label="Scroll right"
+          >
             ›
           </button>
         </div>
@@ -219,7 +302,9 @@ export default function Homepage() {
       ══════════════════════════════════════════════════ */}
       <section className="sfb">
         <p className="sfb-heading">Shop for Babies</p>
-        <p className="sfb-content">Comfortable clothing and essentials for little ones</p>
+        <p className="sfb-content">
+          Comfortable clothing and essentials for little ones
+        </p>
 
         <div className="sfb-grid">
           {/* Row 1 */}
@@ -228,7 +313,11 @@ export default function Homepage() {
               <div className="sfb-card1-content">
                 <div className="sfb-card1-text-section">
                   <div>
-                    <h2>Baby<br />Dresses</h2>
+                    <h2>
+                      Baby
+                      <br />
+                      Dresses
+                    </h2>
                     <p className="sfb-card1-subtitle">Everyday Comfort</p>
                   </div>
                   <button className="sfb-card1-btn">Shop Now</button>
@@ -240,18 +329,42 @@ export default function Homepage() {
             </div>
 
             <div className="sfb-card sfb-card2">
-              <div className="sfb-card-inner">
-                <h3>Towels &amp;<br />Swaddles</h3>
-                <p className="sfb-card-sub">Warm &amp; Soft</p>
-                <button className="sfb-card1-btn sfb-dark-btn">Explore Now</button>
+              <div className="sfb-card1-content">
+                <div className="sfb-card1-text-section">
+                  <div>
+                    <h2>
+                      Towels &amp;
+                      <br />
+                      Swaddles
+                    </h2>
+                    <p className="sfb-card1-subtitle">Warm &amp; Soft</p>
+                  </div>
+                  <button className="sfb-card1-btn">Explore Now</button>
+                </div>
+              </div>
+              <div className="sfb-card2-image-section">
+                <img src={towelbaby} alt="Towels and Swaddles" />
               </div>
             </div>
 
             <div className="sfb-card sfb-card3">
-              <div className="sfb-card-inner">
-                <h3>Diapers &amp;<br />Nappies</h3>
-                <p className="sfb-card-sub">All-Day Care</p>
-                <button className="sfb-card1-btn sfb-dark-btn">View Collection</button>
+              <div className="sfb-card1-content">
+                <div className="sfb-card1-text-section">
+                  <div>
+                    <h2>
+                      Diapers &amp;
+                      <br />
+                      Nappies
+                    </h2>
+                    <p className="sfb-card1-subtitle">All-Day Care</p>
+                  </div>
+                  <button className="sfb-card1-btn sfb-dark-btn">
+                    View Collection
+                  </button>
+                </div>
+              </div>
+              <div className="sfb-card3-image-section">
+                <img src={sleepbaby} alt="Diapers and Nappies" />
               </div>
             </div>
           </div>
@@ -259,18 +372,42 @@ export default function Homepage() {
           {/* Row 2 */}
           <div className="sfb-grid2">
             <div className="sfb-card sfb-card4">
-              <div className="sfb-card-inner">
-                <h3>Blankets &amp;<br />Quilts</h3>
-                <p className="sfb-card-sub">Sleep Comfort</p>
-                <button className="sfb-card1-btn sfb-dark-btn">View Collection</button>
+              <div className="sfb-card1-content">
+                <div className="sfb-card1-text-section">
+                  <div>
+                    <h2>
+                      Blankets &amp;
+                      <br />
+                      Quilts
+                    </h2>
+                    <p className="sfb-card1-subtitle">Sleep Comfort</p>
+                  </div>
+                  <button className="sfb-card1-btn sfb-dark-btn">
+                    View Collection
+                  </button>
+                </div>
+              </div>
+              <div className="sfb-card4-image-section">
+                <img src={blankets} alt="Blankets and Quilts" />
               </div>
             </div>
 
             <div className="sfb-card sfb-card5">
-              <div className="sfb-card-inner">
-                <h3>Baby<br />Accessories</h3>
-                <p className="sfb-card-sub">Little Helpers</p>
-                <button className="sfb-card1-btn sfb-dark-btn">Shop Now</button>
+              <div className="sfb-card1-content">
+                <div className="sfb-card1-text-section">
+                  <div>
+                    <h2>
+                      Baby
+                      <br />
+                      Accessories
+                    </h2>
+                    <p className="sfb-card1-subtitle">Little Helpers</p>
+                  </div>
+                  <button className="sfb-card1-btn sfb-dark-btn">Shop Now</button>
+                </div>
+              </div>
+              <div className="sfb-card5-image-section">
+                <img src={babyacc} alt="Baby Accessories" />
               </div>
             </div>
 
@@ -278,7 +415,11 @@ export default function Homepage() {
               <div className="sfb-card1-content">
                 <div className="sfb-card1-text-section">
                   <div>
-                    <h2>Caps, Mittens &amp;<br />Booties</h2>
+                    <h2>
+                      Caps, Mittens &amp;
+                      <br />
+                      Booties
+                    </h2>
                     <p className="sfb-card1-subtitle">Tiny Essentials</p>
                   </div>
                   <button className="sfb-card1-btn">Explore Now</button>
@@ -301,7 +442,9 @@ export default function Homepage() {
             <h2>Kids&apos; Favorites</h2>
             <p>Loved by kids, trusted by parents — our most loved toys.</p>
           </div>
-          <a href="#" className="fav-header-right">View all →</a>
+          <a href="#" className="fav-header-right">
+            View all →
+          </a>
         </div>
 
         <div className="fav-products-grid">
@@ -337,7 +480,7 @@ export default function Homepage() {
       {/* ══════════════════════════════════════════════════
           PERSONALIZED CAROUSEL + PROMO GRID
       ══════════════════════════════════════════════════ */}
-      <div className="overall-card">
+       <div className="overall-card">
         {/* Carousel */}
         <div className="carousel-main">
           <div className={`carousel-card ${activeSlide.key}`}>
@@ -357,16 +500,18 @@ export default function Homepage() {
                 ))}
               </div>
             </div>
-
+ 
             <div className="carousel-items">
               {activeSlide.items.map((label, i) => (
                 <div className="carousel-product" key={i}>
-                  <div className="img-box" />
+                  <div className="carousel-product-card">
+                    <div className="img-box" />
+                  </div>
                   <span>{label}</span>
                 </div>
               ))}
             </div>
-
+ 
             <div className="carousel-nav">
               <button onClick={prevSlide} className="nav-btn dark" aria-label="Previous">←</button>
               <button onClick={nextSlide} className="nav-btn light" aria-label="Next">→</button>
@@ -381,7 +526,9 @@ export default function Homepage() {
             <div className="starting-card-top">
               <div className="starting-card-content">
                 <p className="starting-card-heading">Starting ₹99</p>
-                <p className="starting-card-para">Cars, rattles, puzzles &amp; more</p>
+                <p className="starting-card-para">
+                  Cars, rattles, puzzles &amp; more
+                </p>
               </div>
               <div className="starting-card-sub" />
             </div>
@@ -399,8 +546,16 @@ export default function Homepage() {
               <p>on every sunday</p>
             </div>
             <div className="countdown-box">
-              {[["Days", days], ["Hours", hours], ["Minutes", mins], ["Seconds", secs]].map(([label, val], i, arr) => (
-                <div key={label} style={{ display: "flex", alignItems: "center" }}>
+              {[
+                ["Days", days],
+                ["Hours", hours],
+                ["Minutes", mins],
+                ["Seconds", secs],
+              ].map(([label, val], i, arr) => (
+                <div
+                  key={label}
+                  style={{ display: "flex", alignItems: "center" }}
+                >
                   <div className="time-block">
                     <span className="time">{String(val).padStart(2, "0")}</span>
                     <span className="cd-label">{label}</span>
@@ -412,23 +567,24 @@ export default function Homepage() {
             <img src={wheel} alt="Spin wheel" className="wheel" />
           </div>
 
-          {/* Rewards */}
-          <div className="reward-card">
-            <div className="reward-content">
-              <h2>Rewards &amp; XP</h2>
-              <p>Shop, play &amp; earn exciting rewards</p>
+          {/* Rewards & Play — must share the "bottom" grid area */}
+          <div className="promo-bottom-row">
+            <div className="reward-card">
+              <div className="reward-content">
+                <h2>Rewards &amp; XP</h2>
+                <p>Shop, play &amp; earn exciting rewards</p>
+              </div>
               <button className="reward-btn">View Rewards</button>
+              <img src={giftbox} alt="Gift" className="reward-gift" />
             </div>
-            <img src={giftbox} alt="Gift" className="reward-gift" />
-          </div>
 
-          {/* Play & Earn */}
-          <div className="play-card">
-            <div className="play-content">
-              <h2>Play &amp; Earn XP</h2>
-              <p>Fun games for kids that reward learning and play</p>
+            <div className="play-card">
+              <div className="play-content">
+                <h2>Play &amp; Earn XP</h2>
+                <p>Fun games for kids that reward learning and play</p>
+              </div>
+              <img src={train} alt="Train toy" className="train-img" />
             </div>
-            <img src={train} alt="Train toy" className="train-img" />
           </div>
         </div>
       </div>
@@ -442,7 +598,9 @@ export default function Homepage() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div className="watch-card" key={i}>
               <div className="image-box" />
-              <button className="play-circle" aria-label="Play video">▶</button>
+              <button className="play-circle" aria-label="Play video">
+                ▶
+              </button>
             </div>
           ))}
         </div>
@@ -455,14 +613,17 @@ export default function Homepage() {
         <div className="contact-left">
           <h2>We&apos;re Here to Help!</h2>
           <p>
-            Have questions about toys, orders, or delivery?<br />
+            Have questions about toys, orders, or delivery?
+            <br />
             Our team is happy to help you anytime.
           </p>
 
           <div className="contact-cards">
             <div className="contact-card phone">
               <div className="icon-circle orange">📞</div>
-              <h4>Phone / <span>WhatsApp</span></h4>
+              <h4>
+                Phone / <span>WhatsApp</span>
+              </h4>
               <p>Call or WhatsApp : +91 XXXXXXXXXX</p>
               <small>Available 10 AM – 7 PM</small>
             </div>
@@ -476,9 +637,9 @@ export default function Homepage() {
         </div>
 
         <div className="contact-right">
-          <input type="text"  placeholder="Name" />
-          <input type="text"  placeholder="Phone or Email" />
-          <textarea           placeholder="Message" rows={5} />
+          <input type="text" placeholder="Name" />
+          <input type="text" placeholder="Phone or Email" />
+          <textarea placeholder="Message" rows={5} />
           <button className="send-btn">
             <span className="btn-circle" />
             Send Message
@@ -493,19 +654,30 @@ export default function Homepage() {
       <section className="reviews-section">
         <h2 className="reviews-title">Loved by Kids, Trusted by Parents</h2>
         <p className="reviews-sub">
-          Real stories from parents and happy little moments from kids who enjoy our toys every day.
+          Real stories from parents and happy little moments from kids who enjoy
+          our toys every day.
         </p>
 
         <div className="reviews-grid">
           {REVIEWS.map((r, i) => (
-            <div key={i} className={`review-card ${r.color === "green" ? "review-green" : ""}`}>
+            <div
+              key={i}
+              className={`review-card ${r.color === "green" ? "review-green" : ""}`}
+            >
               <p className="review-text">{r.text}</p>
               <StarRating />
               <div className="review-author">
-                <div className={`review-avatar ${r.color === "green" ? "av-green" : ""}`} />
+                <div
+                  className={`review-avatar ${r.color === "green" ? "av-green" : ""}`}
+                />
                 <div>
-                  <p className="review-name">{r.quote ? `— ${r.name}` : r.name}</p>
-                  <p className="review-role">{r.role}{r.location ? ` · ${r.location}` : ""}</p>
+                  <p className="review-name">
+                    {r.quote ? `— ${r.name}` : r.name}
+                  </p>
+                  <p className="review-role">
+                    {r.role}
+                    {r.location ? ` · ${r.location}` : ""}
+                  </p>
                 </div>
               </div>
             </div>
@@ -520,7 +692,8 @@ export default function Homepage() {
         <div className="join-card-fonts">
           <p className="join-card-heading">Join Our Kids Club</p>
           <p className="join-card-quote">
-            Get toy updates, play ideas, special offers, and rewards — carefully curated for your child's age.
+            Get toy updates, play ideas, special offers, and rewards — carefully
+            curated for your child's age.
           </p>
           <div className="input-container">
             <input type="text" placeholder="Enter your number" />
@@ -531,7 +704,6 @@ export default function Homepage() {
           <img src={cheerKids} alt="Happy kids" />
         </div>
       </div>
-
     </>
   );
 }

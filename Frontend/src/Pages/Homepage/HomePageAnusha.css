@@ -34,6 +34,7 @@ button { font-family: inherit; cursor: pointer; }
   align-items: flex-start;
   position: relative;
   z-index: 2;
+  margin-bottom: -120px;
 }
 
 .hero-left { max-width: 560px; }
@@ -44,6 +45,7 @@ button { font-family: inherit; cursor: pointer; }
   line-height: 1.08;
   color: #111;
   margin-bottom: 22px;
+  font-family: 'Times New Roman', serif;
 }
 
 .hero-subtext {
@@ -61,14 +63,24 @@ button { font-family: inherit; cursor: pointer; }
   color: #fff;
   font-size: 16px;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: 1px;
   transition: background 0.25s;
 }
 .shop-btn:hover { background: var(--orange-dk); }
 
-.hero-right { max-width: 360px; margin-top: 16px; }
+.hero-right { max-width: 360px; margin-top: 16px; align-self: center; }
 
-.trusted-box { display: flex; gap: 14px; align-items: flex-start; }
+.trusted-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trusted-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
 
 .avatar-group { display: flex; }
 
@@ -76,13 +88,23 @@ button { font-family: inherit; cursor: pointer; }
   width: 36px; height: 36px;
   background: #ccc;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid #000;
   margin-left: -8px;
 }
 .avatar:first-child { margin-left: 0; }
 
-.trusted-title { font-size: 15px; color: #333; }
-.trusted-desc  { font-size: 14px; color: #666; line-height: 1.5; margin-top: 6px; }
+.trusted-title { font-size: 15px; color: #333; margin: 0; }
+.trusted-desc  { font-size: 14px; color: #666; line-height: 1.5; margin: 0; }
+
+.trusted-title strong {
+  display: block;
+  font-size: 18px;
+  margin-top: 4px;
+}
+
+.trusted-desc {
+  max-width: 100%;
+}
 
 .toy-image-wrapper {
   position: relative; z-index: 1;
@@ -215,8 +237,9 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Generic small cards */
 .sfb-card {
+  position: relative;
   height: 338px;
-  background: #fff;
+  background: #fbf9f6;
   border-radius: 24px;
   border: 2px solid var(--border);
   padding: 32px 8%;
@@ -227,11 +250,70 @@ button { font-family: inherit; cursor: pointer; }
 .sfb-card-inner h3 { font-size: 22px; font-weight: 600; color: #222; }
 .sfb-card-sub { font-size: 13px; color: #888; }
 
+.sfb-card2,
+.sfb-card3,
+.sfb-card4,
+.sfb-card5 {
+  background: #fbf9f6;
+  padding: 36px 8%;
+  overflow: hidden;
+}
+
+.sfb-card2 .sfb-card1-content,
+.sfb-card3 .sfb-card1-content,
+.sfb-card4 .sfb-card1-content,
+.sfb-card5 .sfb-card1-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 100%;
+}
+
+.sfb-card2 .sfb-card1-text-section,
+.sfb-card3 .sfb-card1-text-section,
+.sfb-card4 .sfb-card1-text-section,
+.sfb-card5 .sfb-card1-text-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.sfb-card2-image-section,
+.sfb-card3-image-section,
+.sfb-card4-image-section,
+.sfb-card5-image-section {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 50%;
+}
+
+.sfb-card2-image-section,
+.sfb-card3-image-section,
+.sfb-card4-image-section,
+.sfb-card5-image-section {
+  width: 68%;
+  right: -8%;
+}
+
+.sfb-card2-image-section img,
+.sfb-card3-image-section img,
+.sfb-card4-image-section img,
+.sfb-card5-image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
 /* Baby Dresses wide card */
 .sfb-card1 {
   position: relative;
   height: 338px;
-  background: #fff;
+  background: #fbf9f6;
+;
   border-radius: 24px;
   border: 2px solid var(--border);
   overflow: hidden;
@@ -267,18 +349,23 @@ button { font-family: inherit; cursor: pointer; }
 .sfb-dark-btn:hover { background: #000; }
 
 .sfb-card1-image-section {
-  position: absolute; right: 0; bottom: 0;
-  height: 90%; width: 50%;
+  position: absolute;
+  right: -6%;
+  bottom: 0;
+  height: 100%;
+  width: 65%;
 }
 .sfb-card1-image-section img {
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
 /* Caps/Mittens/Booties card */
 .sfb-card6 {
   height: 338px;
-  background: #fff;
+  background: #fbf9f6;
+;
   border-radius: 24px;
   border: 2px solid var(--border);
   padding: 36px 8%;
@@ -286,11 +373,16 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .sfb-card6-image-container {
-  position: absolute; right: 0; top: 0;
-  width: 48%; height: 100%;
+  position: absolute;
+  right: -3%;
+  top: 0;
+  width: 58%;
+  height: 100%;
 }
 .sfb-card6-image-container img {
-  width: 100%; height: 100%; object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -452,7 +544,7 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
 }
 
-.yellow  { background: linear-gradient(120deg, #d4fc79 0%, #faffd1 100%); }
+.yellow  { background: linear-gradient(90deg, #EBF86F 0%, #F6FFA4 50%, #EBF86F 100%); }
 .purple  { background: linear-gradient(120deg, #7f00ff 0%, #e100ff 100%); color: #fff; }
 .multi   { background: linear-gradient(120deg, #f7971e 0%, #ffd200 50%, #00c6ff 100%); }
 
@@ -473,14 +565,31 @@ button { font-family: inherit; cursor: pointer; }
 }
 .dot-active { background: rgba(0,0,0,.7); }
 
-.carousel-items { display: flex; gap: 32px; height: 200px; }
+.carousel-items { display: flex; gap: 32px; height: 220px; }
 
 .carousel-product { width: 18%; flex-shrink: 0; text-align: center; }
 
+/* White outer card */
+.carousel-product-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 10px 10px 12px;
+  margin-bottom: 8px;
+}
+
+/* Light grey image placeholder inside white card */
 .img-box {
-  width: 100%; height: 165px;
-  background: rgba(255,255,255,.45);
-  border-radius: 14px; margin-bottom: 10px;
+  width: 100%; height: 155px;
+  background: #EFEFEF;
+  border-radius: 12px;
+}
+
+/* Dark label text below card */
+.carousel-product span {
+  font-size: 13px;
+  color: #333333;
+  display: block;
+  margin-top: 8px;
 }
 
 .carousel-nav {
@@ -501,125 +610,116 @@ button { font-family: inherit; cursor: pointer; }
   grid-template-columns: 1.5fr 1fr;
   grid-template-rows: auto auto;
   grid-template-areas:
-    "start  fun"
+    "start fun"
     "bottom fun";
   gap: 22px;
 }
-
+ 
 /* Starting ₹99 */
 .starting-card {
   grid-area: start;
   background: var(--blue);
   border-radius: var(--radius-lg);
   padding: 5% 6%;
-  height: 340px;
+  height: 400px;
   display: flex; flex-direction: column; justify-content: space-between;
+  overflow: hidden;
 }
 .starting-card-heading { color: #fff; font-size: 36px; font-weight: 800; }
-.starting-card-para    { color: #dde; font-size: 20px; margin-top: 8px; }
+.starting-card-para    { color: rgba(255,255,255,.85); font-size: 18px; margin-top: 8px; }
 .starting-card-top     { display: flex; gap: 20px; align-items: flex-start; }
 .starting-card-content { flex: 1; }
 .starting-card-sub {
-  height: 115px; width: 180px;
-  background: rgba(255,255,255,.25);
-  border-radius: 10px; flex-shrink: 0;
-}
-.starting-card-bottom  { display: flex; gap: 16px; justify-content: flex-end; }
-.starting-card-bottom .starting-card-sub { height: 115px; width: 130px; }
-
-/* Fun Zone */
-.funz-card {
-  grid-area: fun;
-  background: var(--funz);
-  border-radius: var(--radius-lg);
-  padding: 5% 6%;
-  height: 704px;
-  overflow: hidden;
-  position: relative;
-}
-.funz-content h2 { color: #fff; font-size: 30px; font-weight: 700; margin-bottom: 6px; }
-.funz-content p  { color: rgba(255,255,255,.85); font-size: 15px; margin-bottom: 24px; }
-
-.countdown-box {
-  display: inline-flex;
-  align-items: center;
+  height: 120px; width: 150px;
   background: #fff;
-  border-radius: 8px;
-  padding: 6px 2px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  border-radius: 12px; flex-shrink: 0;
 }
-.time-block { text-align: center; padding: 4px 10px; }
-.time    { display: block; font-size: 22px; font-weight: 700; color: #222; }
-.cd-label{ font-size: 10px; color: #888; margin-top: 2px; }
-.divider { width: 1px; height: 32px; background: #e5e5e5; }
-
-.wheel {
-  width: 110%;
-  margin-left: -5%;
-  margin-top: 30px;
-  position: absolute;
-  bottom: -60px;
-}
-
-/* Reward + Play row */
+.starting-card-bottom  { display: flex; gap: 12px; justify-content: flex-end; }
+.starting-card-bottom .starting-card-sub { height: 112px; flex: 1; width: auto; }
+ 
+/* Reward + Play — wrapper sits in the "bottom" grid area */
 .promo-bottom-row {
   grid-area: bottom;
   display: flex; gap: 22px;
 }
-
+ 
+/* Rewards & XP */
 .reward-card {
   position: relative;
   flex: 1;
-  background: linear-gradient(180deg, #b00020, #c4002b);
+  background: linear-gradient(160deg, #b00020 0%, #8a0018 100%);
   border-radius: var(--radius-lg);
-  padding: 5% 6%;
-  height: 340px;
+  padding: 7% 7% 7%;
+  height: 380px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
-.reward-content h2 { color: #fff; font-size: 28px; font-weight: 700; margin-bottom: 10px; }
-.reward-content p  { color: #eee; font-size: 15px; line-height: 1.5; max-width: 200px; }
+.reward-content h2 { color: #fff; font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+.reward-content p  { color: rgba(255,255,255,.85); font-size: 14px; line-height: 1.5; max-width: 180px; }
 .reward-btn {
-  margin-top: 24px; padding: 10px 20px;
+  margin-top: auto; padding: 10px 20px;
+  width: fit-content;
   border-radius: 10px; border: none;
-  background: #f1f1f1; font-size: 14px;
+  background: #f1f1f1; font-size: 14px; cursor: pointer;
+  font-family: inherit;
 }
+.reward-btn:hover { background: #e0e0e0; }
 .reward-gift {
-  position: absolute; right: -16px; bottom: -16px;
-  width: 170px; pointer-events: none;
+  position: absolute; right: -15px; bottom: -15px;
+  width: 200px; pointer-events: none;
 }
-
+ 
+/* Play & Earn XP */
 .play-card {
   position: relative;
   flex: 1;
   background: var(--sky);
   border-radius: var(--radius-lg);
-  padding: 5% 6%;
-  height: 340px;
+  padding: 7% 7% 0;
+  height: 380px;
   overflow: hidden;
 }
-.play-content h2 { font-size: 26px; font-weight: 700; color: #111; margin-bottom: 10px; }
-.play-content p  { font-size: 15px; color: #333; line-height: 1.5; max-width: 220px; }
+.play-content h2 { font-size: 24px; font-weight: 700; color: #111; margin-bottom: 10px; }
+.play-content p  { font-size: 14px; color: #2a2a2a; line-height: 1.5; max-width: 200px; }
 .train-img {
-  position: absolute; bottom: -50px; left: 0;
-  width: 100%; pointer-events: none;
+  position: absolute; bottom: -20px; right: -20px;
+  width: 85%; pointer-events: none;
 }
-
-/* ── Mapping promo-grid areas for reward/play cards ── */
-.promo-grid > .reward-card { grid-area: auto; }
-.promo-grid > .play-card   { grid-area: auto; }
-
-/* Override: place reward & play in bottom area */
-.promo-grid {
-  grid-template-areas:
-    "start fun"
-    "bot1  fun"
-    "bot2  fun";
-  grid-template-rows: auto auto auto;
+ 
+/* Fun Zone — right column, spans both rows */
+.funz-card {
+  grid-area: fun;
+  background: var(--funz);
+  border-radius: var(--radius-lg);
+  padding: 8% 7%;
+  overflow: hidden;
+  position: relative;
+  /* height is set by the two left rows + gap */
+  min-height: 670px;
 }
-.starting-card { grid-area: start; }
-.reward-card   { grid-area: bot1; }
-.play-card     { grid-area: bot2; }
-.funz-card     { grid-area: fun; }
+.funz-content h2 { color: #fff; font-size: 30px; font-weight: 700; margin-bottom: 8px; }
+.funz-content p  { color: rgba(255,255,255,.85); font-size: 15px; margin-bottom: 28px; }
+ 
+.countdown-box {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+.time-block { text-align: center; padding: 4px 14px; }
+.time    { display: block; font-size: 24px; font-weight: 700; color: #222; }
+.cd-label{ font-size: 10px; color: #888; margin-top: 3px; display: block; }
+.divider { width: 1px; height: 36px; background: #e0e0e0; }
+ 
+.wheel {
+  width: 105%;
+  margin-left: -2%;
+  margin-top: 32px;
+  display: block;
+}
 
 /* ═══════════════════════════════════════════════════════════════
    WATCH & CHOOSE YOUR TOY
@@ -878,14 +978,19 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 900px) {
   .promo-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     grid-template-areas:
       "start"
-      "bot1"
-      "bot2"
+      "bottom"
       "fun";
   }
-  .funz-card { height: 420px; }
-  .wheel     { width: 90%; margin-left: 5%; bottom: -20px; }
+  .promo-bottom-row { flex-direction: row; }
+  .funz-card { min-height: 420px; }
+  .wheel     { width: 90%; margin-left: 5%; margin-top: 20px; }
+}
+@media (max-width: 560px) {
+  .promo-bottom-row { flex-direction: column; }
+  .reward-card, .play-card { height: 280px; }
 }
 
 /* ── Carousel ── */
