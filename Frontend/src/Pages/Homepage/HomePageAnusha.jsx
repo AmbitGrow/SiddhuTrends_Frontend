@@ -199,7 +199,7 @@ export default function Homepage() {
               Carefully selected toys that inspire learning, creativity, and
               happiness&nbsp;— trusted by parents and loved by kids.
             </p>
-            <button className="shop-btn" onClick={() => navigate("/shop")}>
+            <button className="shop-btn" onClick={() => navigate("/products")}>
               Shop Now
             </button>
           </div>
