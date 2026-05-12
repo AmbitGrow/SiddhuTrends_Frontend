@@ -16,11 +16,25 @@ import sleepbaby from "../../assets/Photos/sleepbaby.png";
 import towelbaby from "../../assets/Photos/towelbaby.png";
 import blankets from "../../assets/Photos/blankets.png";
 
+// ─── new icon images ────────────────────────────────────────────────────────
+import arrow from "../../assets/Photos/arrow.png";
+import backarrow from "../../assets/Photos/backarrow.png";
+import nextarrow from "../../assets/Photos/nextarrow.png";
+import heart from "../../assets/Photos/heart.png";
+import phoneIcon from "../../assets/Photos/phone.png";
+import starIcon from "../../assets/Photos/star.png";
+import emailIcon from "../../assets/Photos/mail_icon.png";
+import sendmessagearrow from "../../assets/Photos/sendmessagearrow.png";
+import salesticker from "../../assets/Photos/salesticker.png";
+import saleimage from "../../assets/Photos/saleimage.png";
+import reel1 from "../../assets/Photos/reel1.png";
+import reel2 from "../../assets/Photos/reel2.png";
+
 // ─── tiny helpers ───────────────────────────────────────────────────────────
 const StarRating = ({ count = 5 }) => (
   <span className="stars">
     {Array.from({ length: count }).map((_, i) => (
-      <span key={i}>★</span>
+      <img key={i} src={starIcon} alt="Star" />
     ))}
   </span>
 );
@@ -36,7 +50,7 @@ const ProductCard = ({
     <div className="fav-image-border">
       <div className="fav-img-box">
         <button className="fav-heart" aria-label="Wishlist">
-          ♡
+          <img src={heart} alt="Wishlist" />
         </button>
       </div>
     </div>
@@ -57,8 +71,10 @@ const ProductCard = ({
 
 const ComboCard = () => (
   <div className="combo-card">
-    <div className="combo-sale">SALE</div>
-    <div className="combo-img-box"></div>
+    <div className="combo-sale">
+      <img src={salesticker} alt="Sale" />
+    </div>
+    <div className="combo-img-box" style={{ backgroundImage: `url(${saleimage})` }}></div>
     <div className="combo-content">
       <p className="combo-title">
         Duck Sliding Toy Musical Climbing Track (Pack of 3)
@@ -275,7 +291,7 @@ export default function Homepage() {
       <section className="categories-section">
         <div className="categories-header">
           <p>Explore Popular Categories</p>
-          <span className="view-all">View all &rsaquo;</span>
+          <span className="view-all">View all <span className="popular-view-all-arrow"><img src={arrow} alt="Arrow" /></span></span>
         </div>
 
         <div className="categories-wrapper">
@@ -292,7 +308,9 @@ export default function Homepage() {
             onClick={scrollCategories}
             aria-label="Scroll right"
           >
-            ›
+            <span className="scroll-arrow">
+              <img src={arrow} alt="Scroll" />
+              </span>
           </button>
         </div>
       </section>
@@ -443,7 +461,8 @@ export default function Homepage() {
             <p>Loved by kids, trusted by parents — our most loved toys.</p>
           </div>
           <a href="#" className="fav-header-right">
-            View all →
+            
+            <span className="view-all">View all <span className="popular-view-all-arrow"><img src={arrow} alt="Arrow" /></span></span>
           </a>
         </div>
 
@@ -472,7 +491,9 @@ export default function Homepage() {
         <div className="combo-view-btn-wrap">
           <button className="combo-view-btn">
             <span className="combo-view-text">View All</span>
-            <span className="combo-view-arrow">→</span>
+            <span className="combo-view-arrow">
+              <img src={nextarrow} alt="Arrow" />
+            </span>
           </button>
         </div>
       </section>
@@ -513,8 +534,8 @@ export default function Homepage() {
             </div>
  
             <div className="carousel-nav">
-              <button onClick={prevSlide} className="nav-btn dark" aria-label="Previous">←</button>
-              <button onClick={nextSlide} className="nav-btn light" aria-label="Next">→</button>
+              <button onClick={prevSlide} className="nav-btn dark" aria-label="Previous"><span className="combo-back-arrow"><img src={backarrow} alt="Arrow" /></span></button>
+              <button onClick={nextSlide} className="nav-btn light" aria-label="Next"><span className="combo-next-arrow"><img src={nextarrow} alt="Arrow" /></span></button>
             </div>
           </div>
         </div>
@@ -595,9 +616,16 @@ export default function Homepage() {
       <section className="watch-section">
         <h2>Watch &amp; Choose Your Toy</h2>
         <div className="watch-scroll">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {[
+            { img: reel1 },
+            { img: reel2 },
+            { img: reel1 },
+            { img: reel2 },
+            { img: reel1 },
+            { img: reel2 }
+          ].map((reel, i) => (
             <div className="watch-card" key={i}>
-              <div className="image-box" />
+              <div className="image-box" style={{ backgroundImage: `url(${reel.img})` }} />
               <button className="play-circle" aria-label="Play video">
                 ▶
               </button>
@@ -620,7 +648,9 @@ export default function Homepage() {
 
           <div className="contact-cards">
             <div className="contact-card phone">
-              <div className="icon-circle orange">📞</div>
+              <div className="icon-circle orange">
+                <img src={phoneIcon} alt="Phone" />
+              </div>
               <h4>
                 Phone / <span>WhatsApp</span>
               </h4>
@@ -629,7 +659,9 @@ export default function Homepage() {
             </div>
 
             <div className="contact-card email">
-              <div className="icon-circle blue">✉️</div>
+              <div className="icon-circle blue">
+                <img src={emailIcon} alt="Email" />
+              </div>
               <h4>Email</h4>
               <p>Email: support@siddhutrends.in</p>
             </div>
@@ -643,7 +675,9 @@ export default function Homepage() {
           <button className="send-btn">
             <span className="btn-circle" />
             Send Message
-            <span className="arrow-circle">↗</span>
+            <span className="arrow-circle">
+              <img src={sendmessagearrow} alt="Send" />
+            </span>
           </button>
         </div>
       </section>
