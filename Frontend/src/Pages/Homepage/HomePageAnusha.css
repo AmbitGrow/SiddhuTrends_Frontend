@@ -176,17 +176,17 @@ button { font-family: inherit; cursor: pointer; }
 
 .categories-header {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 50px;
+  margin-bottom: 60px;
 }
 .categories-header p { font-size: 34px; font-weight: 500; color: #000; }
-.view-all { color: #1A94FF; font-size: 24px; cursor: pointer; padding-top: 10px;}
+.view-all { color: #1A94FF; font-size: 22px; cursor: pointer; padding-top: 10px;}
 .view-all .popular-view-all-arrow {
   color: #1A94FF;
   display: inline-flex; align-items: center; justify-content: center;
-  width: 12px; height: 12px; margin-left: 3px;
+  width: 18px; height: 18px;
 }
 .view-all .popular-view-all-arrow img {
-  width: 100%; height: 100%;
+  width: 85%; height: 85%;
   object-fit: contain;
   filter: invert(35%) sepia(94%) saturate(3238%) hue-rotate(189deg) brightness(96%) contrast(91%);
 }
@@ -196,28 +196,33 @@ button { font-family: inherit; cursor: pointer; }
 .categories-container {
   display: flex; gap: 70px;
   overflow-x: auto; scroll-behavior: smooth;
-  scrollbar-width: none; padding-bottom: 10px;
+  scrollbar-width: none; padding-bottom: 80px;
 }
 .categories-container::-webkit-scrollbar { display: none; }
 
 .category-card { text-align: center; flex-shrink: 0; width: 160px; }
 
 .category-circle {
-  width: 180px; height: 180px;
+  width: 185px; height: 185px;
   background: #F6F6F6;
   border-radius: 50%;
-  border: 1px solid #ddd;
-  margin-bottom: 12px;
+  border: 1px solid #c8c5c5;
+  margin-bottom: 35px;
 }
-.category-card p { font-size: 15px; color: #333; }
+.category-card p {
+  padding-left: 15px;
+  font-weight: 300;
+  font-size: 25px;
+  /* color: #333; */
+}
 
 .scroll-btn {
   position: absolute; right: -12px;
   top: 80px; transform: translateY(-50%);
-  width: 44px; height: 44px;
+  width: 50px; height: 50px;
   border-radius: 50%; border: none;
   background: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  box-shadow: 1px 1px 1px rgba(0,0,0,.15);
   display: flex; align-items: center; justify-content: center;
 }
 
@@ -236,8 +241,13 @@ button { font-family: inherit; cursor: pointer; }
 ═══════════════════════════════════════════════════════════════ */
 .sfb { padding: 40px 6%; display: flex; flex-direction: column; gap: 18px; }
 
-.sfb-heading { font-size: 28px; font-weight: 600; color: #000; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.12); }
-.sfb-content { font-size: 20px; color: var(--text); }
+.sfb-heading { font-size: 32px; font-weight: 500; color: #000; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.12); margin-bottom: 15px;}
+.sfb-content {
+  font-size: 23px;
+  font-weight: 100;
+  color: #333333;
+  margin-bottom: 45px;
+}
 
 .sfb-grid { display: flex; flex-direction: column; gap: 14px; }
 
@@ -259,9 +269,9 @@ button { font-family: inherit; cursor: pointer; }
 .sfb-card {
   position: relative;
   height: 338px;
-  background: #fbf9f6;
+  background: #faf8f6;
   border-radius: 24px;
-  border: 2px solid var(--border);
+  border: 1px solid #d5d4d4;
   padding: 32px 8%;
   display: flex; flex-direction: column; justify-content: flex-end;
 }
@@ -274,7 +284,7 @@ button { font-family: inherit; cursor: pointer; }
 .sfb-card3,
 .sfb-card4,
 .sfb-card5 {
-  background: #fbf9f6;
+  background: #faf8f6;
   padding: 36px 8%;
   overflow: hidden;
 }
@@ -314,7 +324,8 @@ button { font-family: inherit; cursor: pointer; }
 .sfb-card3-image-section,
 .sfb-card4-image-section,
 .sfb-card5-image-section {
-  width: 68%;
+  top: 2%;
+  width: 90%;
   right: -8%;
 }
 
@@ -332,8 +343,7 @@ button { font-family: inherit; cursor: pointer; }
 .sfb-card1 {
   position: relative;
   height: 338px;
-  background: #fbf9f6;
-;
+  background: #faf8f6;
   border-radius: 24px;
   border: 2px solid var(--border);
   overflow: hidden;
@@ -353,27 +363,28 @@ button { font-family: inherit; cursor: pointer; }
   height: 100%;
 }
 
-.sfb-card1-text-section h2 { font-size: 26px; font-weight: 600; color: #000; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.10); }
-.sfb-card1-subtitle { font-size: 13px; color: #888; margin-top: 8px; }
+.sfb-card1-text-section h2 { font-size: 22px; font-weight: 200; color: #000; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.10); }
+.sfb-card1-subtitle { font-size: 13px; color: #999999; margin-top: 8px; }
 
 .sfb-card1-btn {
   background: #2d2d2d; color: #fff;
   border: none; padding: 10px 22px;
-  border-radius: 8px; font-size: 14px;
+  border-radius: 3px; font-size: 14px;
   width: fit-content;
   transition: background 0.25s;
   margin-top: 12px;
 }
 .sfb-card1-btn:hover { background: #000; }
-.sfb-dark-btn { background: #2d2d2d; color: #fff; margin-top: auto; width: fit-content; padding: 9px 18px; border-radius: 8px; border: none; font-size: 13px; transition: background 0.25s; }
+.sfb-dark-btn { background: #2d2d2d; color: #fff; margin-top: auto; width: fit-content; padding: 9px 18px; border-radius: 3px; border: none; font-size: 13px; transition: background 0.25s; }
 .sfb-dark-btn:hover { background: #000; }
 
 .sfb-card1-image-section {
   position: absolute;
-  right: -6%;
+  top: 4px;
+  right: -7%;
   bottom: 0;
-  height: 100%;
-  width: 65%;
+  height: 102%;
+  width: 110%;
 }
 .sfb-card1-image-section img {
   width: 100%;
@@ -384,8 +395,7 @@ button { font-family: inherit; cursor: pointer; }
 /* Caps/Mittens/Booties card */
 .sfb-card6 {
   height: 338px;
-  background: #fbf9f6;
-;
+  background: #faf8f6;
   border-radius: 24px;
   border: 2px solid var(--border);
   padding: 36px 8%;
