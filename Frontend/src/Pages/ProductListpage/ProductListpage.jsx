@@ -9,23 +9,41 @@ import { BiSort } from "react-icons/bi";
 import { IoStar } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-import { getAllProducts } from "../../services/ProductService";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts, getCategories, getAgeGroups } from "../../services/ProductService";
 
 function ProductListpage() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  /* ---------------- PRODUCT DATA ---------------- */
 
   const [open, setOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState("Sort by custom");
-  const productsData = getAllProducts();
+
+  /* ---------------- DATA FETCHING ---------------- */
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
+
+  const { data: ageGroups = [] } = useQuery({
+    queryKey: ["ageGroups"],
+    queryFn: getAgeGroups,
+  });
+
+  const { data: productsData = [], isLoading, isError } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const res = await getProducts({ limit: 1000 });
+      return res.products;
+    },
+  });
 
   const selectOption = (value) => {
     setSortOption(value);
     setOpen(false);
   };
-  /* ---------------- STATES ---------------- */
 
+  /* ---------------- STATES ---------------- */
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAge, setSelectedAge] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
@@ -41,7 +59,6 @@ function ProductListpage() {
   const productsPerPage = 5;
 
   /* ---------------- CLEAR FILTER ---------------- */
-
   const clearFilters = () => {
     setSelectedAge([]);
     setSelectedCategory([]);
@@ -55,7 +72,6 @@ function ProductListpage() {
   };
 
   /* ---------------- MULTI SELECT ---------------- */
-
   const handleMultiSelect = (value, state, setState) => {
     if (state.includes(value)) {
       setState(state.filter((item) => item !== value));
@@ -66,7 +82,6 @@ function ProductListpage() {
   };
 
   /* ---------------- FILTER LOGIC ---------------- */
-
   const filteredProducts = useMemo(() => {
     return productsData
       .filter((product) => {
@@ -116,6 +131,7 @@ function ProductListpage() {
         return 0;
       });
   }, [
+    productsData,
     searchTerm,
     selectedAge,
     selectedCategory,
@@ -128,7 +144,6 @@ function ProductListpage() {
   ]);
 
   /* ---------------- PAGINATION ---------------- */
-
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const displayedProducts = filteredProducts.slice(
@@ -144,21 +159,35 @@ function ProductListpage() {
     }
   };
 
-  /* ---------------- JSX ---------------- */
+  /* ---------------- LOADING & ERROR STATES ---------------- */
+  if (isLoading) {
+    return (
+      <div className="productpage-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "400px" }}>
+        <div className="loading-spinner">Loading products from SiddhuTrends catalog...</div>
+      </div>
+    );
+  }
 
+  if (isError) {
+    return (
+      <div className="productpage-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "400px" }}>
+        <div className="error-message">Failed to load products. Please check backend connection.</div>
+      </div>
+    );
+  }
+
+  /* ---------------- JSX ---------------- */
   return (
     <div className="productpage-container">
       <div className="back-page-btn">
-        <div className="back">
+        <div className="back" onClick={() => navigate(-1)}>
           <GoArrowLeft className="back-arrow-icon" />
           <p>Back</p>
         </div>
         <div className="directory">
           <p className="visited">Products</p>
           <span>&gt;&gt;</span>
-          <p className="visited">Car</p>
-          <span>&gt;&gt;</span>
-          <p>Battery Car</p>
+          <p className="visited">Catalog</p>
         </div>
       </div>
 
@@ -192,23 +221,17 @@ function ProductListpage() {
               <p>Age</p>
             </div>
             <div className="checkbox-menu">
-              {[
-                "0 - 12 months",
-                "1 - 3 years",
-                "3 - 5 years",
-                "5 - 8 years",
-                "8 - 12 years",
-              ].map((age) => (
-                <label key={age} className="custom-checkbox">
+              {ageGroups.map((ageGroup) => (
+                <label key={ageGroup._id} className="custom-checkbox">
                   <input
                     type="checkbox"
-                    checked={selectedAge.includes(age)}
+                    checked={selectedAge.includes(ageGroup.label)}
                     onChange={() =>
-                      handleMultiSelect(age, selectedAge, setSelectedAge)
+                      handleMultiSelect(ageGroup.label, selectedAge, setSelectedAge)
                     }
                   />
                   <span className="checkmark"></span>
-                  <p>{age}</p>
+                  <p>{ageGroup.label}</p>
                 </label>
               ))}
             </div>
@@ -255,7 +278,7 @@ function ProductListpage() {
                 <input
                   type="range"
                   min="0"
-                  max="1000"
+                  max="2000"
                   value={minPrice}
                   onChange={(e) =>
                     setMinPrice(Math.min(Number(e.target.value), maxPrice - 10))
@@ -264,7 +287,7 @@ function ProductListpage() {
                 <input
                   type="range"
                   min="0"
-                  max="1000"
+                  max="2000"
                   value={maxPrice}
                   onChange={(e) =>
                     setMaxPrice(Math.max(Number(e.target.value), minPrice + 10))
@@ -274,8 +297,8 @@ function ProductListpage() {
                 <div
                   className="slider-range"
                   style={{
-                    left: `${(minPrice / 1000) * 100}%`,
-                    right: `${100 - (maxPrice / 1000) * 100}%`,
+                    left: `${(minPrice / 2000) * 100}%`,
+                    right: `${100 - (maxPrice / 2000) * 100}%`,
                   }}
                 ></div>
               </div>
@@ -290,7 +313,7 @@ function ProductListpage() {
               <p>Discount</p>
             </div>
             <div className="checkbox-menu checkbox-menu-discount">
-              {[10, 30].map((d) => (
+              {[10, 30, 50].map((d) => (
                 <label key={d} className="custom-checkbox">
                   <input
                     type="checkbox"
@@ -315,21 +338,21 @@ function ProductListpage() {
               <p>Product Category</p>
             </div>
             <div className="checkbox-menu checkbox-menu-product-category">
-              {["Car", "Bike", "Educational Toy", "Wooden Toys"].map((cat) => (
-                <label key={cat} className="custom-checkbox">
+              {categories.map((cat) => (
+                <label key={cat._id} className="custom-checkbox">
                   <input
                     type="checkbox"
-                    checked={selectedCategory.includes(cat)}
+                    checked={selectedCategory.includes(cat.name)}
                     onChange={() =>
                       handleMultiSelect(
-                        cat,
+                        cat.name,
                         selectedCategory,
                         setSelectedCategory,
                       )
                     }
                   />
                   <span className="checkmark"></span>
-                  <p> {cat}</p>
+                  <p> {cat.name}</p>
                 </label>
               ))}
             </div>
@@ -348,6 +371,7 @@ function ProductListpage() {
                 <input
                   type="radio"
                   name="availability"
+                  checked={availability === "in"}
                   onChange={() => setAvailability("in")}
                 />
                 <span className="checkmark"></span>
@@ -357,6 +381,7 @@ function ProductListpage() {
                 <input
                   type="radio"
                   name="availability"
+                  checked={availability === "out"}
                   onChange={() => setAvailability("out")}
                 />
                 <span className="checkmark"></span>
@@ -402,114 +427,126 @@ function ProductListpage() {
           </div>
 
           <div className="product-card-container">
-            {displayedProducts.map((product) => (
-              <div
-                className="product-card"
-                key={product.id}
-                onClick={() => navigate(`/products/${product.id}`)}
-              >
-                <div className="product-img">
-                  {/* ❤️ Wishlist */}
-                  <div
-                    className="p-wishlist"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleWishlist(product.id);
-                    }}
-                  >
-                    <FaHeart
-                      className={
-                        wishlist.includes(product.id)
-                          ? "p-wishlist-icon active"
-                          : "p-wishlist-icon"
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="product-details">
-                  <div className="product-name">
-                    <p>{product.name}</p>
+            {displayedProducts.length === 0 ? (
+              <p style={{ margin: "20px", fontSize: "16px", color: "#666" }}>No products match selected filters.</p>
+            ) : (
+              displayedProducts.map((product) => (
+                <div
+                  className="product-card"
+                  key={product.id}
+                  onClick={() => navigate(`/products/${product.id}`)}
+                >
+                  <div className="product-img">
+                    {/* ❤️ Wishlist */}
+                    <div
+                      className="p-wishlist"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(product.id);
+                      }}
+                    >
+                      <FaHeart
+                        className={
+                          wishlist.includes(product.id)
+                            ? "p-wishlist-icon active"
+                            : "p-wishlist-icon"
+                        }
+                      />
+                    </div>
                   </div>
 
-                  <div className="second-review-age">
-                    <div className="review">
-                      <div className="review-icon">
-                        <IoStar />
-                        <IoStar />
-                        <IoStar />
-                        <IoStar />
-                        <IoStar />
+                  <div className="product-details">
+                    <div className="product-name">
+                      <p>{product.name}</p>
+                    </div>
+
+                    <div className="second-review-age">
+                      <div className="review">
+                        <div className="review-icon">
+                          <IoStar />
+                          <IoStar />
+                          <IoStar />
+                          <IoStar />
+                          <IoStar />
+                        </div>
+                        <div className="text">
+                          <p>({product.reviews} Reviews)</p>
+                        </div>
                       </div>
-                      <div className="text">
-                        <p>({product.reviews} Reviews)</p>
+
+                      <div className="age">
+                        <p>
+                          <span>Age: </span>
+                          {product.age}
+                        </p>
                       </div>
                     </div>
 
-                    <div className="age">
+                    <div className="price-details">
+                      <p className="price">₹{product.price}</p>
+                      {product.originalPrice > product.price && (
+                        <p className="strike">₹{product.originalPrice}</p>
+                      )}
+                      {product.discount > 0 && (
+                        <span className="discount-badge">-{product.discount}%</span>
+                      )}
+                    </div>
+
+                    <div className="delivery">
+                      <img src={deliverylogo} alt="delivery" />
                       <p>
-                        <span>Age: </span>
-                        {product.age}
+                        <span>Estimated delivery : </span> 3 - 5 working days
                       </p>
                     </div>
+
+                    <button
+                      className="add-cart-to-btn"
+                      disabled={!product.inStock}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (product.inStock) {
+                          addToCart(product);
+                        }
+                      }}
+                    >
+                      {product.inStock ? "Add to Cart" : "Out of Stock"}
+                    </button>
                   </div>
-
-                  <div className="price-details">
-                    <p className="price">₹{product.price}</p>
-                    <p className="strike">₹{product.originalPrice}</p>
-
-                    <span className="discount-badge">-{product.discount}%</span>
-                  </div>
-
-                  <div className="delivery">
-                    <img src={deliverylogo} alt="delivery" />
-                    <p>
-                      <span>Estimated delivery : </span> 3 - 5 working days
-                    </p>
-                  </div>
-
-                  <button
-                    className="add-cart-to-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addToCart(product);
-                    }}
-                  >
-                    Add to Cart
-                  </button>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
-          <div className="pagination-container">
-            <div className="pagination">
-              <button
-                className="nav-btn"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                &lt; Previous
-              </button>
-
-              {[...Array(totalPages)].map((_, i) => (
+          {totalPages > 1 && (
+            <div className="pagination-container">
+              <div className="pagination">
                 <button
-                  key={i}
-                  className={`page-btn ${currentPage === i + 1 ? "active-page" : ""}`}
-                  onClick={() => setCurrentPage(i + 1)}
+                  className="nav-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
                 >
-                  {i + 1}
+                  &lt; Previous
                 </button>
-              ))}
 
-              <button
-                className="nav-btn"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                Next &gt;
-              </button>
+                {[...Array(totalPages)].map((_, i) => (
+                  <button
+                    key={i}
+                    className={`page-btn ${currentPage === i + 1 ? "active-page" : ""}`}
+                    onClick={() => setCurrentPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+
+                <button
+                  className="nav-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  Next &gt;
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

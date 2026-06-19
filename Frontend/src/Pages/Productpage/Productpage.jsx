@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import { AiOutlineLike } from "react-icons/ai";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
@@ -8,31 +8,51 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import "./Productpage.css";
 import { getProductById } from "../../services/ProductService";
+import { useQuery } from "@tanstack/react-query";
 
 function Productpage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();  
 
-  const product = getProductById(id);
-
-  if (!product) return <h2>Product not found</h2>;
-
-  const discount = Math.round(
-    ((product.originalPrice - product.price) / product.originalPrice) * 100,
-  );
+  const { data: product, isLoading, isError } = useQuery({
+    queryKey: ["product", id],
+    queryFn: () => getProductById(id),
+    enabled: !!id,
+  });
 
   /* ---------------- STATES ---------------- */
-
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [liked, setLiked] = useState(false);
   const [wishlist, setWishlist] = useState(false);
   const [likesCount, setLikesCount] = useState(1000);
   const [openSection, setOpenSection] = useState(null);
 
-  /* ---------------- FUNCTIONS ---------------- */
+  // Synchronize initial selected image once product loads
+  useEffect(() => {
+    if (product && product.images && product.images.length > 0) {
+      setSelectedImage(product.images[0]);
+    }
+  }, [product]);
 
+  if (isLoading) {
+    return (
+      <div className="product-list-page-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "400px" }}>
+        <div className="loading-spinner">Loading product details...</div>
+      </div>
+    );
+  }
+
+  if (isError || !product) {
+    return (
+      <div className="product-list-page-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "400px" }}>
+        <div className="error-message">Product not found or failed to load.</div>
+      </div>
+    );
+  }
+
+  /* ---------------- FUNCTIONS ---------------- */
   const toggleLike = () => {
     setLiked(!liked);
     setLikesCount(liked ? likesCount - 1 : likesCount + 1);
@@ -73,8 +93,6 @@ function Productpage() {
     navigate("/checkout/address");
   };
 
-  /* ---------------- JSX ---------------- */
-
   return (
     <div className="product-list-page-container">
       {/* BACK SECTION */}
@@ -97,6 +115,7 @@ function Productpage() {
                     selectedImage === img ? "active-thumb" : ""
                   }`}
                   onClick={() => setSelectedImage(img)}
+                  style={{ backgroundImage: `url(${img})`, backgroundSize: "cover", backgroundPosition: "center", cursor: "pointer" }}
                 ></div>
               ))}
             </div>
@@ -128,7 +147,7 @@ function Productpage() {
           </div>
 
           <div className="product-show-section">
-            <div className="product-main-img"></div>
+            <div className="product-main-img" style={{ backgroundImage: `url(${selectedImage || product.images[0]})`, backgroundSize: "cover", backgroundPosition: "center" }}></div>
           </div>
         </div>
 
@@ -139,8 +158,12 @@ function Productpage() {
 
           <div className="price-section">
             <h1>₹{product.price}.00</h1>
-            <span className="strike">₹{product.originalPrice}.00</span>
-            <span className="discount-badge">{discount}% off</span>
+            {product.originalPrice > product.price && (
+              <span className="strike">₹{product.originalPrice}.00</span>
+            )}
+            {product.discount > 0 && (
+              <span className="discount-badge">{product.discount}% off</span>
+            )}
           </div>
 
           {/* QUANTITY + CART */}
@@ -151,13 +174,13 @@ function Productpage() {
               <button onClick={increaseQty}>+</button>
             </div>
 
-            <button className="add-cart-btn" onClick={handleAddToCart}>
-              Add to Cart
+            <button className="add-cart-btn" onClick={handleAddToCart} disabled={!product.inStock}>
+              {product.inStock ? "Add to Cart" : "Out of Stock"}
             </button>
           </div>
 
-          <button className="buy-now-btn" onClick={buyNow}>
-            Buy Now
+          <button className="buy-now-btn" onClick={buyNow} disabled={!product.inStock}>
+            {product.inStock ? "Buy Now" : "Out of Stock"}
           </button>
 
           {/* ACCORDION */}
