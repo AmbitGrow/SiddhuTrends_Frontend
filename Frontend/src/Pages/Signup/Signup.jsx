@@ -3,24 +3,30 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import "../Auth.css";
 
-function Login() {
-  const { login } = useAuth();
+function Signup() {
+  const { signup } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Preserve intended destination or default to home
   const searchParams = new URLSearchParams(location.search);
   const from = location.state?.from?.pathname || searchParams.get("from") || "/";
   const redirectSearch = location.search || (location.state?.from?.pathname ? `?from=${encodeURIComponent(location.state.from.pathname)}` : "");
-  console.log("DEBUG LOGIN: location.state =", location.state, "from =", from, "redirectSearch =", redirectSearch);
+  console.log("DEBUG SIGNUP: location.state =", location.state, "from =", from, "redirectSearch =", redirectSearch);
 
   const validate = () => {
     const newErrors = {};
+
+    if (!formData.name) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -29,6 +35,8 @@ function Login() {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     }
 
     setErrors(newErrors);
@@ -37,13 +45,12 @@ function Login() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // Clear field error when user starts typing
     if (errors[e.target.name]) {
       setErrors({ ...errors, [e.target.name]: "" });
     }
   };
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setServerError("");
 
@@ -51,10 +58,10 @@ function Login() {
 
     setIsLoading(true);
     try {
-      await login(formData.email, formData.password);
+      await signup(formData.name, formData.email, formData.password);
       navigate(from, { replace: true });
     } catch (err) {
-      setServerError(err.message || "Invalid credentials or server error");
+      setServerError(err.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -63,11 +70,25 @@ function Login() {
   return (
     <div className="auth-page-container">
       <div className="auth-form-container">
-        <h2>Sign In</h2>
+        <h2>Create an Account</h2>
 
         {serverError && <div className="auth-error-message">{serverError}</div>}
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleSignup}>
+          <div className="auth-form-group">
+            <label htmlFor="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter your name"
+              disabled={isLoading}
+            />
+            {errors.name && <span className="auth-field-error">{errors.name}</span>}
+          </div>
+
           <div className="auth-form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -90,7 +111,7 @@ function Login() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter your password"
+              placeholder="Create a password"
               disabled={isLoading}
             />
             {errors.password && (
@@ -99,16 +120,16 @@ function Login() {
           </div>
 
           <button type="submit" className="auth-submit-btn" disabled={isLoading}>
-            {isLoading ? "Signing In..." : "Sign In"}
+            {isLoading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
 
         <div className="auth-redirect-link">
-          Don't have an account? <Link to={`/signup${redirectSearch}`}>Sign Up</Link>
+          Already have an account? <Link to={`/login${redirectSearch}`}>Sign In</Link>
         </div>
       </div>
     </div>
   );
 }
 
-export default Login;
+export default Signup;

@@ -6,6 +6,7 @@ export const CheckoutProvider = ({ children }) => {
   const [address, setAddress] = useState(null);
   const [orderDetails, setOrderDetails] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState(null);
+  const [orderIntentId, setOrderIntentId] = useState(null);
 
   return (
     <CheckoutContext.Provider
@@ -15,7 +16,9 @@ export const CheckoutProvider = ({ children }) => {
         orderDetails,
         setOrderDetails,
         paymentMethod,
-        setPaymentMethod
+        setPaymentMethod,
+        orderIntentId,
+        setOrderIntentId
       }}
     >
       {children}

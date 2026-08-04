@@ -5,35 +5,47 @@ import deliveryicon from "../../../assets/Photos/deliveryicon.png";
 import profileicon from "../../../assets/Photos/profileblack.png";
 import cod from "../../../assets/Photos/cod.png";
 import download from '../../../assets/Photos/downloadicon.png'
+
 function ConfirmPage() {
   const { orderDetails } = useCheckout();
   const [order, setOrder] = useState(orderDetails);
   const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(orderId).catch(() => {});
-    setCopied(true);
-    setShowToast(true);
-    setTimeout(() => {
-      setCopied(false);
-      setShowToast(false);
-    }, 2000);
-  };
+
   useEffect(() => {
     if (!orderDetails) {
       const saved = localStorage.getItem("lastOrder");
-      if (saved) setOrder(JSON.parse(saved));
+      if (saved) {
+        setOrder(JSON.parse(saved));
+      }
     }
-  }, []);
-  if (!order) return <p>No Order Found</p>;
-  const subtotal = order.subtotal || 0;
-  const discount = order.discount || 0;
-  const discountPercent = order.discountPercent || 0;
-  const deliveryCharge = order.deliveryCharge || 0;
-  const totalAmount = order.totalAmount || 0;
-  const advanceAmount = order.advanceAmount || 0;
-  const codRemaining = order.codRemaining || 0;
+  }, [orderDetails]);
 
-  const orderId = "ST-ORD-24891";
+  if (!order) return <p className="no-order">No Order Found</p>;
+
+  // Compute subtotal from items selling prices
+  const items = order.items || [];
+  const subtotal = order.subtotal !== undefined ? order.subtotal : items.reduce((acc, item) => acc + (item.totalSelling || (item.sellingPrice * item.quantity)), 0);
+  const gstAmount = order.gstAmount || 0;
+  const totalAmount = order.finalAmount || order.totalAmount || 0;
+  const deliveryCharge = order.deliveryCharge !== undefined ? order.deliveryCharge : Math.max(totalAmount - subtotal - gstAmount, 0);
+
+  const paidAmount = order.paidAmount || 0;
+  const amountDue = order.amountDue || 0;
+  const orderId = order.orderNumber || "N/A";
+  const firstFirstName = order.deliveryAddress?.fullName?.split(" ")[0] || "Customer";
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(orderId).catch(() => {});
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
+
+  const formattedDate = order.confirmedAt 
+    ? new Date(order.confirmedAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' })
+    : new Date().toLocaleDateString("en-IN", { day: 'numeric', month: 'short', year: 'numeric' });
+
   return (
     <div className="checkout-page">
       <div className="check-circle">
@@ -51,15 +63,15 @@ function ConfirmPage() {
           </svg>
         </div>
         <div className="check-title">
-          <p className="c-t-thanku">Thank you, Saravanan!</p>
+          <p className="c-t-thanku">Thank you, {firstFirstName}!</p>
           <p className="c-t-msg">Your order has been placed successfully.</p>
-          <p className="xp-badge">You Earned 25 XP Points!</p>
+          <p className="xp-badge">You Earned {order.xpEarned || 0} XP Points!</p>
         </div>
       </div>
       <div className="order-id-date">
         <div className="order-id">
           <p>
-            <span>Order ID :</span> ST-ORD-24891
+            <span>Order ID :</span> {orderId}
           </p>
           <button
             className="copy-btn"
@@ -93,32 +105,31 @@ function ConfirmPage() {
           </button>
         </div>
         <p className="order-date">
-          <span>Order Date :</span> 21 Feb 2026
+          <span>Order Date :</span> {formattedDate}
         </p>
       </div>
 
-      <div className="product-card-order">
-        <div className="product-row-order">
-          <div className="product-thumb" />
+      {items.map((item, idx) => (
+        <div key={item.productId || idx} className="product-card-order">
+          <div className="product-row-order">
+            <div className="product-thumb" />
 
-          <div className="product-info">
-            <div className="product-name">
-              <p>LED Police Supercar Toy for Kids Light up 911 Patrol Car</p>
-            </div>
-            <div className="product-meta-row">
-              <div className="product-meta-item">
-                Age : <span>6–12 months</span>
+            <div className="product-info">
+              <div className="product-name">
+                <p>{item.productName}</p>
               </div>
-              <div className="product-meta-item">
-                Quantity : <span>1</span>
+              <div className="product-meta-row">
+                <div className="product-meta-item">
+                  Quantity : <span>{item.quantity}</span>
+                </div>
               </div>
             </div>
           </div>
+          <div className="product-price">
+            <p>₹{item.sellingPrice}</p>
+          </div>
         </div>
-        <div className="product-price">
-          <p>₹500</p>
-        </div>
-      </div>
+      ))}
 
       <div className="delivery-details-sec">
         <div className="attribute-title">
@@ -127,11 +138,12 @@ function ConfirmPage() {
         <div className="delivery-details-box">
           <div className="delivery-details-row">
             <div className="row-icon">
-              <img src={deliveryicon}></img>
+              <img src={deliveryicon} alt="Delivery"></img>
             </div>
             <p>
-              <span>Home -</span> 45 /4 / 1, Bharathiyar 5th Street , Gethalaiya
-              Theate , Sankarankovil, TamilNadu - 627756
+              <span>Address -</span> {order.deliveryAddress?.addressLine1}{" "}
+              {order.deliveryAddress?.addressLine2 ? `, ${order.deliveryAddress.addressLine2}` : ""},{" "}
+              {order.deliveryAddress?.city}, {order.deliveryAddress?.state} - {order.deliveryAddress?.pincode}
             </p>
           </div>
           <div
@@ -139,10 +151,10 @@ function ConfirmPage() {
             style={{ alignItems: "center" }}
           >
             <div className="row-icon">
-              <img src={profileicon}></img>
+              <img src={profileicon} alt="Profile"></img>
             </div>
             <p>
-              <span>Saravanan - </span>7598238098
+              <span>{order.deliveryAddress?.fullName} - </span>{order.deliveryAddress?.phone}
             </p>
           </div>
         </div>
@@ -150,43 +162,59 @@ function ConfirmPage() {
 
       <div className="payment-summary-box">
         <div className="attribute-title">
-          <p>Payment Method</p>
+          <p>Payment Details</p>
         </div>
         <div className="payment-summary-card">
           <div className="payment-attribute-row">
             <span className="row-text">Subtotal</span>
-            <span className="row-text row-text-value">₹{subtotal}</span>
+            <span className="row-text row-text-value">₹{Math.round(subtotal)}</span>
           </div>
 
-          <div className="payment-attribute-row row-red">
-            <span className="row-text">Discount (-{discountPercent}%)</span>
-            <span className="row-text row-text-value">-₹{discount}</span>
+          <div className="payment-attribute-row">
+            <span className="row-text">GST (18%)</span>
+            <span className="row-text row-text-value">₹{Math.round(gstAmount)}</span>
           </div>
 
           <div className="payment-attribute-row">
             <span className="row-text">Delivery charge</span>
-            <span className="row-text row-text-value">₹{deliveryCharge}</span>
+            <span className="row-text row-text-value">
+              {deliveryCharge === 0 ? "Free" : `₹${Math.round(deliveryCharge)}`}
+            </span>
           </div>
 
           <div className="payment-summary-hr" />
 
           <div className="payment-attribute-row total-row">
-            <span className="row-text"  style={{color:"black"}}>Total Amount</span>
-            <span className="row-text row-text-value"  style={{color:"black"}}>₹{totalAmount}</span>
+            <span className="row-text" style={{color:"black"}}>Total Amount</span>
+            <span className="row-text row-text-value" style={{color:"black"}}>₹{Math.round(totalAmount)}</span>
           </div>
 
           <div className="cod-method-all">
             <div className="payment-cod-row">
               <span className="row-text">Payment Method</span>
               <div className="payment-method">
-                <img src={cod}></img>
+                {order.orderType === "PARTIAL_COD" && <img src={cod} alt="COD"></img>}
                 <span className="row-text row-text-value" style={{fontWeight:"400"}}>
-                  Cash On Delivery
+                  {order.orderType === "PARTIAL_COD" ? "Cash On Delivery (Partial)" : "Online Payment"}
                 </span>
               </div>
             </div>
-            <div className="payment-cod-row" style={{justifyContent:"center" ,gap:"15px"}}>
-              <img src={download} className="download-icon" style={{width:"25px"}}></img>
+
+            {order.orderType === "PARTIAL_COD" && (
+              <>
+                <div className="payment-cod-row">
+                  <span className="row-text">Paid Advance</span>
+                  <span className="row-text row-text-value">₹{Math.round(paidAmount)}</span>
+                </div>
+                <div className="payment-cod-row">
+                  <span className="row-text">Pay on Delivery</span>
+                  <span className="row-text row-text-value">₹{Math.round(amountDue)}</span>
+                </div>
+              </>
+            )}
+
+            <div className="payment-cod-row" style={{justifyContent:"center" ,gap:"15px", marginTop:"15px"}}>
+              <img src={download} className="download-icon" style={{width:"25px"}} alt="Download"></img>
               <span className="row-text" style={{color:"black",letterSpacing:".5px"}}>Download Invoice</span>
             </div>
           </div>

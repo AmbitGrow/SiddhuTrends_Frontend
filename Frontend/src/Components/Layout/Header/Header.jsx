@@ -100,9 +100,14 @@ function Header() {
           </div>
 
           {!user ? (
-            <div className="login" onClick={() => navigate("/login")}>
-              <p>Sign In</p>
-              <FaPersonWalkingArrowRight className="arrow-icon-login" />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <div className="login" onClick={() => navigate("/login")}>
+                <p>Sign In</p>
+                <FaPersonWalkingArrowRight className="arrow-icon-login" />
+              </div>
+              <div className="login" onClick={() => navigate("/signup")} style={{ backgroundColor: '#d17a33', color: 'white', border: '1px solid #d17a33' }}>
+                <p>Sign Up</p>
+              </div>
             </div>
           ) : (
             <div

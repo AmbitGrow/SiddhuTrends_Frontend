@@ -12,8 +12,10 @@ import Confirmationpage from "../Pages/Checkoutpages/Confirmation/ConfirmPage";
 import Paymentpage from "../Pages/Checkoutpages/Payment/PaymentPage";
 import Wishlist from "../Pages/Wishlist/Wishlist";
 import Login from "../Pages/Login/Login";
+import Signup from "../Pages/Signup/Signup";
 import Profilepage from "../Pages/MyProfile/Profilepage";
 import Orderpage from "../Pages/MyOrder/Orderpage";
+import PrivateRoute from "./PrivateRoute";
 
 function AppRoutes() {
   return (
@@ -25,7 +27,7 @@ function AppRoutes() {
 
       <Route path="/cart" element={<Cart />} />
 
-      <Route path="/checkout" element={<CheckoutPage />}>
+      <Route path="/checkout" element={<PrivateRoute><CheckoutPage /></PrivateRoute>}>
         <Route path="address" element={<Addresspage />} />
         <Route path="summary" element={<Ordersummarypage />} />
         <Route path="payment" element={<Paymentpage />} />
@@ -33,10 +35,11 @@ function AppRoutes() {
       </Route>
 
       <Route path="*" element={<NotFound />} />
-      <Route path="/wishlist" element={<Wishlist />} />
+      <Route path="/wishlist" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
       <Route path="/login" element={<Login />} />
-      <Route path="/profile" element={<Profilepage />} />
-      <Route path="/orders" element={<Orderpage />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/profile" element={<PrivateRoute><Profilepage /></PrivateRoute>} />
+      <Route path="/orders" element={<PrivateRoute><Orderpage /></PrivateRoute>} />
     </Routes>
   );
 }

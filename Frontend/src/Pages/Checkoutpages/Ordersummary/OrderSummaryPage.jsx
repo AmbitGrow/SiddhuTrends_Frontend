@@ -7,14 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { IoStar } from "react-icons/io5";
 import onlinepaymenticon from "../../../assets/Photos/onlinepayment.png";
 import cod from "../../../assets/Photos/cod.png";
+import OrderService from "../../../services/OrderService";
+
 function OrderSummaryPage() {
-  const { address, setPaymentMethod } = useCheckout();
-  const { cartItems } = useCart();
+  const { address, setPaymentMethod, setOrderIntentId } = useCheckout();
+  const { cartItems, totals } = useCart();
   const navigate = useNavigate();
 
   const [coupon, setCoupon] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("COD");
-  const [discountPercent, setDiscountPercent] = useState(20);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 🔒 Redirect if no address
   useEffect(() => {
@@ -30,42 +32,57 @@ function OrderSummaryPage() {
     }
   }, [cartItems, navigate]);
 
-  // 🧮 Calculations
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + Number(item.price) * Number(item.quantity),
-    0,
-  );
+  // 🧮 Backend-derived Calculations
+  const subtotal = totals.subtotal || 0;
+  const gstAmount = totals.gstAmount || 0;
+  const deliveryCharge = totals.deliveryCharge || 0;
+  const totalAmount = totals.totalAmount || 0;
 
-  const discount = Math.round((subtotal * discountPercent) / 100);
-  const deliveryCharge = subtotal > 499 ? 0 : 40;
-
-  const totalAmount = Math.max(subtotal - discount + deliveryCharge, 0);
-
-  const advanceAmount = selectedPayment === "COD" ? 20 : totalAmount;
-
-  const codRemaining = selectedPayment === "COD" ? totalAmount - 20 : 0;
+  const advanceAmount = selectedPayment === "COD" ? 199 : totalAmount;
+  const codRemaining = selectedPayment === "COD" ? Math.max(totalAmount - 199, 0) : 0;
 
   const applyCoupon = () => {
     if (coupon.trim() === "") return;
 
-    if (coupon.toUpperCase() === "SAVE10") {
-      setDiscountPercent(10);
-      alert("Coupon Applied: 10% Discount");
-    } else if (coupon.toUpperCase() === "SAVE30") {
-      setDiscountPercent(30);
-      alert("Coupon Applied: 30% Discount");
+    if (coupon.toUpperCase() === "SAVE10" || coupon.toUpperCase() === "SAVE30") {
+      alert("Coupon Applied! Discount will be calculated during the final checkout stage.");
     } else {
       alert("Invalid Coupon Code");
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!address) return alert("Address missing");
     if (cartItems.length === 0) return;
 
-    setPaymentMethod(selectedPayment);
+    setIsSubmitting(true);
+    try {
+      const deliveryAddress = {
+        fullName: `${address.firstName} ${address.lastName}`.trim(),
+        phone: address.phone,
+        addressLine1: address.addressLine,
+        addressLine2: `${address.area} ${address.landmark || ""}`.trim(),
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode
+      };
 
-    navigate("/checkout/payment");
+      const res = await OrderService.createOrderIntentFromCart(deliveryAddress);
+      setOrderIntentId(res.orderIntentId);
+      setPaymentMethod(selectedPayment);
+      navigate("/checkout/payment");
+    } catch (err) {
+      if (err.status === 409 && err.originalError?.response?.data?.existingOrderIntentId) {
+        // Reuse existing active intent if one is already in progress
+        setOrderIntentId(err.originalError.response.data.existingOrderIntentId);
+        setPaymentMethod(selectedPayment);
+        navigate("/checkout/payment");
+      } else {
+        alert(err.message || "Failed to initiate checkout");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -94,14 +111,14 @@ function OrderSummaryPage() {
           </div>
           <div className="product-summary-card">
             {cartItems.map((item) => (
-              <div key={item.id} className="product-row">
+              <div key={item.product._id} className="product-row">
                 <div className="product-img-div">
                   <div className="cart-product-img" />
                   <div className="quantity-badge">{item.quantity}</div>
                 </div>
 
                 <div className="product-info">
-                  <p className="product-title">{item.name}</p>
+                  <p className="product-title">{item.product.name}</p>
                   <div className="review-age">
                     <div className="review">
                       <div className="review-icon">
@@ -112,7 +129,7 @@ function OrderSummaryPage() {
                         <IoStar />
                       </div>
                       <div className="text">
-                        <p>({item.reviews} Reviews)</p>
+                        <p>({item.product.reviews} Reviews)</p>
                       </div>
                     </div>
                   </div>
@@ -120,7 +137,7 @@ function OrderSummaryPage() {
                     <div className="age age-date-title">
                       <p>
                         <span>Age: </span>
-                        {item.age}
+                        {item.product.age}
                       </p>
                     </div>
                     <div className="delivery-date age-date-title">
@@ -131,9 +148,9 @@ function OrderSummaryPage() {
                   </div>
 
                   <div className="price-row">
-                    <p className="price">₹{item.price}</p>
+                    <p className="price">₹{item.product.price}</p>
                     <p className="strike">
-                      ₹{item.originalPrice || item.price + 200}
+                      ₹{item.product.originalPrice || item.product.price + 200}
                     </p>
                   </div>
                 </div>
@@ -168,7 +185,7 @@ function OrderSummaryPage() {
               onClick={() => setSelectedPayment("ONLINE")}
             >
               <div className="option-icon">
-                <img src={onlinepaymenticon}></img>
+                <img src={onlinepaymenticon} alt="online payment"></img>
               </div>
               <div>
                 <p className="method-title">Online Payment</p>
@@ -189,12 +206,12 @@ function OrderSummaryPage() {
               onClick={() => setSelectedPayment("COD")}
             >
               <div className="option-icon">
-                <img src={cod}></img>
+                <img src={cod} alt="cash on delivery"></img>
               </div>
               <div>
                 <p className="method-title">Cash On Delivery</p>
                 <p className="method-option-paragraph">
-                  ₹20 advance payment required. Remaining amount payable on
+                  ₹199 advance payment required. Remaining amount payable on
                   delivery
                 </p>
               </div>
@@ -207,7 +224,7 @@ function OrderSummaryPage() {
 
         <div className="payment-summary-box">
           <div className="attribute-title">
-            <p>Payment Method</p>
+            <p>Payment Summary</p>
           </div>
           <div className="payment-summary-card">
             <div className="payment-attribute-row">
@@ -215,21 +232,23 @@ function OrderSummaryPage() {
               <span className="row-text row-text-value">₹{subtotal}</span>
             </div>
 
-            <div className="payment-attribute-row row-red">
-              <span className="row-text">Discount (-{discountPercent}%)</span>
-              <span className="row-text row-text-value">-₹{discount}</span>
+            <div className="payment-attribute-row">
+              <span className="row-text">GST (18%)</span>
+              <span className="row-text row-text-value">₹{Math.round(gstAmount)}</span>
             </div>
 
             <div className="payment-attribute-row">
               <span className="row-text">Delivery charge</span>
-              <span className="row-text row-text-value">₹{deliveryCharge}</span>
+              <span className="row-text row-text-value">
+                {deliveryCharge === 0 ? "Free" : `₹${deliveryCharge}`}
+              </span>
             </div>
 
             <div className="payment-summary-hr" />
 
             <div className="payment-attribute-row total-row">
               <span className="row-text">Total Amount</span>
-              <span className="row-text row-text-value">₹{totalAmount}</span>
+              <span className="row-text row-text-value">₹{Math.round(totalAmount)}</span>
             </div>
 
             {selectedPayment === "COD" && (
@@ -237,7 +256,7 @@ function OrderSummaryPage() {
                 <div className="payment-cod-row">
                   <span className="row-text">Payment Method</span>
                   <div className="payment-method">
-                    <img src={cod}></img>
+                    <img src={cod} alt="cod"></img>
                     <span className="row-text row-text-value">
                       Cash On Delivery
                     </span>
@@ -264,11 +283,15 @@ function OrderSummaryPage() {
         <button
           className="confirm-btn"
           onClick={handleConfirm}
-          disabled={totalAmount === 0}
+          disabled={totalAmount === 0 || isSubmitting}
         >
-          <p>{selectedPayment === "COD"
-            ? "Confirm Order & Pay 20"
-            : "Continue to Payment"}</p>
+          <p>
+            {isSubmitting
+              ? "Processing..."
+              : selectedPayment === "COD"
+              ? "Confirm Order & Pay ₹199"
+              : "Continue to Payment"}
+          </p>
         </button>
       </div>
     </div>
@@ -276,7 +299,3 @@ function OrderSummaryPage() {
 }
 
 export default OrderSummaryPage;
-
-
-
-
